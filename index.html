@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IRONFORGE GYM — Forge Your Legacy</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;900&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+<!-- ========== LOADER ========== -->
+<div id="loader">
+  <div class="loader-inner">
+    <div class="loader-logo">IRONFORGE</div>
+    <div class="loader-bar"><div class="loader-fill"></div></div>
+    <p>Forging Your Experience...</p>
+  </div>
+</div>
+
+<!-- ========== CURSOR ========== -->
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
+
+<!-- ========== PARTICLES ========== -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- ========== NAV ========== -->
+<nav id="navbar">
+  <div class="nav-container">
+    <div class="nav-logo">
+      <span class="logo-iron">IRON</span><span class="logo-forge">FORGE</span>
+      <div class="logo-tagline">GYM</div>
+    </div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#programs">Programs</a></li>
+      <li><a href="#trainers">Trainers</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#membership">Membership</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#" class="nav-btn" onclick="openTrialModal()">Free Trial</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ========== HERO ========== -->
+<section id="home" class="hero">
+  <div class="hero-bg-text">IRONFORGE</div>
+  <div class="hero-content">
+    <div class="hero-badge"><span>Est. 2020</span> — Premium Fitness Experience</div>
+    <h1 class="hero-title">
+      <span class="line line-1">FORGE YOUR</span>
+      <span class="line line-2 orange">STRONGEST</span>
+      <span class="line line-3">SELF</span>
+    </h1>
+    <p class="hero-sub">Where iron meets ambition. Train harder, recover smarter, and transform into the athlete you were meant to be.</p>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="openTrialModal()"><i class="fas fa-fire"></i> Book Free Trial</button>
+      <button class="btn-secondary" onclick="scrollTo('#programs')"><i class="fas fa-play"></i> Explore Programs</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num" data-target="2500">0</span><span>+</span><p>Members</p></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-num" data-target="18">0</span><span>+</span><p>Expert Trainers</p></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-num" data-target="35">0</span><span>+</span><p>Programs</p></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-num" data-target="98">0</span><span>%</span><p>Success Rate</p></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-image-stack">
+      <div class="hero-img-card card-1">
+        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=500&fit=crop&crop=center" alt="Gym Training" />
+        <div class="card-label"><i class="fas fa-dumbbell"></i> Strength Zone</div>
+      </div>
+      <div class="hero-img-card card-2">
+        <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=300&h=380&fit=crop&crop=center" alt="Cardio Training" />
+        <div class="card-label"><i class="fas fa-heartbeat"></i> Cardio Zone</div>
+      </div>
+      <div class="hero-floating-badge badge-1"><i class="fas fa-trophy"></i> #1 Gym 2024</div>
+      <div class="hero-floating-badge badge-2"><i class="fas fa-star"></i> 4.9 Rating</div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span>Scroll Down</span>
+  </div>
+</section>
+
+<!-- ========== TICKER ========== -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span>STRENGTH TRAINING</span><span class="dot">✦</span>
+    <span>CARDIO BLAST</span><span class="dot">✦</span>
+    <span>YOGA & FLEXIBILITY</span><span class="dot">✦</span>
+    <span>BOXING</span><span class="dot">✦</span>
+    <span>HIIT CLASSES</span><span class="dot">✦</span>
+    <span>NUTRITION COACHING</span><span class="dot">✦</span>
+    <span>PERSONAL TRAINING</span><span class="dot">✦</span>
+    <span>BODY TRANSFORMATION</span><span class="dot">✦</span>
+    <span>STRENGTH TRAINING</span><span class="dot">✦</span>
+    <span>CARDIO BLAST</span><span class="dot">✦</span>
+    <span>YOGA & FLEXIBILITY</span><span class="dot">✦</span>
+    <span>BOXING</span><span class="dot">✦</span>
+  </div>
+</div>
+
+<!-- ========== ABOUT ========== -->
+<section id="about" class="about section">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-images">
+        <div class="about-img-main reveal">
+          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&h=600&fit=crop&crop=center" alt="Gym Interior" />
+          <div class="img-overlay-badge">
+            <div class="pulse-ring"></div>
+            <i class="fas fa-dumbbell"></i>
+            <span>Premium Equipment</span>
+          </div>
+        </div>
+        <div class="about-img-secondary reveal">
+          <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=300&h=250&fit=crop&crop=center" alt="Training" />
+        </div>
+        <div class="about-experience-badge reveal">
+          <div class="exp-num">6+</div>
+          <div class="exp-text">Years of Excellence</div>
+        </div>
+      </div>
+      <div class="about-content reveal">
+        <div class="section-tag">About IRONFORGE</div>
+        <h2 class="section-title">Not Just A Gym — <span class="orange">A Transformation Hub</span></h2>
+        <p>IRONFORGE was built on one belief: every person has an athlete inside them waiting to be unleashed. We combine cutting-edge equipment, science-backed programs, and world-class coaches to give you the ultimate fitness edge.</p>
+        <div class="about-features">
+          <div class="feature-item"><i class="fas fa-check-circle"></i> State-of-the-art equipment worth ₹2 Crore+</div>
+          <div class="feature-item"><i class="fas fa-check-circle"></i> AI-powered personalized workout plans</div>
+          <div class="feature-item"><i class="fas fa-check-circle"></i> In-house dietitian & nutrition coaching</div>
+          <div class="feature-item"><i class="fas fa-check-circle"></i> Recovery zone with sauna & ice bath</div>
+          <div class="feature-item"><i class="fas fa-check-circle"></i> 24/7 access for premium members</div>
+          <div class="feature-item"><i class="fas fa-check-circle"></i> Biometric attendance & progress tracking</div>
+        </div>
+        <button class="btn-primary" onclick="openInquiryModal()">Join The Family <i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== UNIQUE FEATURES ========== -->
+<section class="unique-features section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">Why We're Different</div>
+      <h2 class="section-title">Features That Set Us <span class="orange">Apart</span></h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon"><i class="fas fa-brain"></i></div>
+        <h3>AI Workout Planner</h3>
+        <p>Our proprietary AI analyzes your body metrics, goals, and recovery to generate a perfectly tailored daily workout — updated in real-time.</p>
+        <div class="feature-tag">Exclusive</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+        <h3>Real-Time Progress Dashboard</h3>
+        <p>Track every lift, every rep, every calorie. Your personal dashboard gives you a 360° view of your transformation journey.</p>
+        <div class="feature-tag">Data-Driven</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><i class="fas fa-utensils"></i></div>
+        <h3>Nutrition Bar On-Site</h3>
+        <p>Grab post-workout meals, custom protein shakes, and dietitian-approved snacks without leaving the gym.</p>
+        <div class="feature-tag">Exclusive</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><i class="fas fa-snowflake"></i></div>
+        <h3>Recovery Suite</h3>
+        <p>Access our premium sauna, steam room, ice bath, and massage chairs — the ultimate recovery experience after intense sessions.</p>
+        <div class="feature-tag">Premium</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><i class="fas fa-users"></i></div>
+        <h3>Community Challenges</h3>
+        <p>Monthly fitness challenges with real prizes. Compete with members, earn badges, and climb the leaderboard while getting fit.</p>
+        <div class="feature-tag">Community</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+        <h3>Ironforge App</h3>
+        <p>Book classes, track workouts, chat with trainers, order nutrition, and manage your membership — all from one app.</p>
+        <div class="feature-tag">Digital</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PROGRAMS ========== -->
+<section id="programs" class="programs section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">Our Programs</div>
+      <h2 class="section-title">Train With <span class="orange">Purpose</span></h2>
+    </div>
+    <div class="programs-grid">
+      <div class="program-card reveal" style="--delay:0s">
+        <div class="program-img">
+          <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400&h=300&fit=crop&crop=center" alt="Strength Training" />
+          <div class="program-overlay"></div>
+        </div>
+        <div class="program-info">
+          <div class="program-meta"><span class="difficulty hard">Advanced</span><span class="duration"><i class="fas fa-clock"></i> 60 min</span></div>
+          <h3>Powerlifting & Strength</h3>
+          <p>Build raw, functional strength with our periodized powerlifting program led by certified coaches.</p>
+          <button class="program-btn" onclick="openTrialModal()">Book Trial Class <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+      <div class="program-card reveal" style="--delay:0.1s">
+        <div class="program-img">
+          <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop&crop=center" alt="HIIT" />
+          <div class="program-overlay"></div>
+        </div>
+        <div class="program-info">
+          <div class="program-meta"><span class="difficulty medium">Intermediate</span><span class="duration"><i class="fas fa-clock"></i> 45 min</span></div>
+          <h3>HIIT Blast</h3>
+          <p>High-intensity interval training that burns fat fast and builds cardiovascular endurance.</p>
+          <button class="program-btn" onclick="openTrialModal()">Book Trial Class <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+      <div class="program-card reveal" style="--delay:0.2s">
+        <div class="program-img">
+          <img src="https://images.unsplash.com/photo-1552196563-55cd4e45efb3?w=400&h=300&fit=crop&crop=center" alt="Yoga" />
+          <div class="program-overlay"></div>
+        </div>
+        <div class="program-info">
+          <div class="program-meta"><span class="difficulty easy">Beginner</span><span class="duration"><i class="fas fa-clock"></i> 60 min</span></div>
+          <h3>Yoga & Mindfulness</h3>
+          <p>Flexibility, balance, and mental clarity through guided yoga sessions for all fitness levels.</p>
+          <button class="program-btn" onclick="openTrialModal()">Book Trial Class <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+      <div class="program-card reveal" style="--delay:0.3s">
+        <div class="program-img">
+          <img src="https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=400&h=300&fit=crop&crop=center" alt="Boxing" />
+          <div class="program-overlay"></div>
+        </div>
+        <div class="program-info">
+          <div class="program-meta"><span class="difficulty hard">All Levels</span><span class="duration"><i class="fas fa-clock"></i> 60 min</span></div>
+          <h3>Boxing & MMA</h3>
+          <p>Learn real fighting techniques while getting one of the most complete full-body workouts imaginable.</p>
+          <button class="program-btn" onclick="openTrialModal()">Book Trial Class <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+      <div class="program-card reveal" style="--delay:0.4s">
+        <div class="program-img">
+          <img src="https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=400&h=300&fit=crop&crop=center" alt="CrossFit" />
+          <div class="program-overlay"></div>
+        </div>
+        <div class="program-info">
+          <div class="program-meta"><span class="difficulty medium">Intermediate</span><span class="duration"><i class="fas fa-clock"></i> 50 min</span></div>
+          <h3>CrossFit X</h3>
+          <p>Functional movements at high intensity. Develop strength, agility, and endurance simultaneously.</p>
+          <button class="program-btn" onclick="openTrialModal()">Book Trial Class <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+      <div class="program-card reveal" style="--delay:0.5s">
+        <div class="program-img">
+          <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&crop=center" alt="Body Transformation" />
+          <div class="program-overlay"></div>
+        </div>
+        <div class="program-info">
+          <div class="program-meta"><span class="difficulty easy">All Levels</span><span class="duration"><i class="fas fa-clock"></i> 12 Weeks</span></div>
+          <h3>Body Transformation</h3>
+          <p>12-week complete transformation program combining training, nutrition, and lifestyle coaching.</p>
+          <button class="program-btn" onclick="openTrialModal()">Book Trial Class <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== TRAINERS ========== -->
+<section id="trainers" class="trainers section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">Meet The Team</div>
+      <h2 class="section-title">Elite <span class="orange">Trainers</span></h2>
+      <p>Every IRONFORGE trainer is certified, experienced, and deeply committed to your success.</p>
+    </div>
+    <div class="trainers-grid">
+      <div class="trainer-card reveal">
+        <div class="trainer-img-wrap">
+          <img src="https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=350&h=420&fit=crop&crop=face" alt="Trainer Rajan" />
+          <div class="trainer-social">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#" onclick="openWhatsApp('917000000001')"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="trainer-info">
+          <h3>Rajan Sharma</h3>
+          <p class="trainer-role">Head Coach — Strength & Powerlifting</p>
+          <div class="trainer-stats">
+            <div><span>8+</span><p>Yrs Exp</p></div>
+            <div><span>500+</span><p>Clients</p></div>
+            <div><span>12</span><p>Certs</p></div>
+          </div>
+          <div class="trainer-specialties">
+            <span>Powerlifting</span><span>Olympic Lifting</span><span>Sports Conditioning</span>
+          </div>
+        </div>
+      </div>
+      <div class="trainer-card reveal">
+        <div class="trainer-img-wrap">
+          <img src="https://images.unsplash.com/photo-1594381898411-846e7d193883?w=350&h=420&fit=crop&crop=face" alt="Trainer Priya" />
+          <div class="trainer-social">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#" onclick="openWhatsApp('917000000002')"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="trainer-info">
+          <h3>Priya Nair</h3>
+          <p class="trainer-role">Yoga & Wellness Specialist</p>
+          <div class="trainer-stats">
+            <div><span>6+</span><p>Yrs Exp</p></div>
+            <div><span>350+</span><p>Clients</p></div>
+            <div><span>9</span><p>Certs</p></div>
+          </div>
+          <div class="trainer-specialties">
+            <span>Yoga</span><span>Meditation</span><span>Flexibility</span>
+          </div>
+        </div>
+      </div>
+      <div class="trainer-card reveal">
+        <div class="trainer-img-wrap">
+          <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=350&h=420&fit=crop&crop=face" alt="Trainer Arjun" />
+          <div class="trainer-social">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#" onclick="openWhatsApp('917000000003')"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="trainer-info">
+          <h3>Arjun Mehta</h3>
+          <p class="trainer-role">Boxing & MMA Coach</p>
+          <div class="trainer-stats">
+            <div><span>10+</span><p>Yrs Exp</p></div>
+            <div><span>600+</span><p>Clients</p></div>
+            <div><span>15</span><p>Certs</p></div>
+          </div>
+          <div class="trainer-specialties">
+            <span>Boxing</span><span>MMA</span><span>Kickboxing</span>
+          </div>
+        </div>
+      </div>
+      <div class="trainer-card reveal">
+        <div class="trainer-img-wrap">
+          <img src="https://images.unsplash.com/photo-1609899537878-48700b88d682?w=350&h=420&fit=crop&crop=face" alt="Trainer Sneha" />
+          <div class="trainer-social">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#" onclick="openWhatsApp('917000000004')"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="trainer-info">
+          <h3>Sneha Kapoor</h3>
+          <p class="trainer-role">Nutrition Coach & Dietitian</p>
+          <div class="trainer-stats">
+            <div><span>7+</span><p>Yrs Exp</p></div>
+            <div><span>800+</span><p>Clients</p></div>
+            <div><span>11</span><p>Certs</p></div>
+          </div>
+          <div class="trainer-specialties">
+            <span>Nutrition</span><span>Weight Loss</span><span>Meal Planning</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== GALLERY ========== -->
+<section id="gallery" class="gallery section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">Our Space</div>
+      <h2 class="section-title">Inside <span class="orange">IRONFORGE</span></h2>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item large reveal" onclick="openLightbox(this)">
+        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=600&fit=crop&crop=center" alt="Gym Floor" />
+        <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Gym Floor</span></div>
+      </div>
+      <div class="gallery-item reveal" onclick="openLightbox(this)">
+        <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=300&fit=crop&crop=center" alt="Cardio Zone" />
+        <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Cardio Zone</span></div>
+      </div>
+      <div class="gallery-item reveal" onclick="openLightbox(this)">
+        <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400&h=300&fit=crop&crop=center" alt="Weight Room" />
+        <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Weight Room</span></div>
+      </div>
+      <div class="gallery-item reveal" onclick="openLightbox(this)">
+        <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop&crop=center" alt="Fitness Class" />
+        <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Group Classes</span></div>
+      </div>
+      <div class="gallery-item tall reveal" onclick="openLightbox(this)">
+        <img src="https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=400&h=600&fit=crop&crop=center" alt="Boxing" />
+        <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Boxing Ring</span></div>
+      </div>
+      <div class="gallery-item reveal" onclick="openLightbox(this)">
+        <img src="https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=400&h=300&fit=crop&crop=center" alt="Training" />
+        <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Personal Training</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== MEMBERSHIP ========== -->
+<section id="membership" class="membership section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">Pricing Plans</div>
+      <h2 class="section-title">Choose Your <span class="orange">Journey</span></h2>
+      <p>No hidden fees. No binding contracts on basic plans. Pure value.</p>
+    </div>
+    <div class="plans-grid">
+      <div class="plan-card reveal">
+        <div class="plan-header">
+          <div class="plan-icon"><i class="fas fa-bolt"></i></div>
+          <h3>Starter</h3>
+          <div class="plan-price"><span class="currency">₹</span>1,499<span class="period">/mo</span></div>
+        </div>
+        <ul class="plan-features">
+          <li><i class="fas fa-check"></i> Full gym access (6AM–10PM)</li>
+          <li><i class="fas fa-check"></i> Locker room access</li>
+          <li><i class="fas fa-check"></i> 2 Group classes/week</li>
+          <li><i class="fas fa-check"></i> App access</li>
+          <li class="disabled"><i class="fas fa-times"></i> Personal trainer sessions</li>
+          <li class="disabled"><i class="fas fa-times"></i> Recovery suite</li>
+          <li class="disabled"><i class="fas fa-times"></i> Nutrition coaching</li>
+        </ul>
+        <button class="plan-btn" onclick="openInquiryModal('Starter')">Get Started</button>
+      </div>
+      <div class="plan-card featured reveal">
+        <div class="plan-badge">Most Popular</div>
+        <div class="plan-header">
+          <div class="plan-icon"><i class="fas fa-fire"></i></div>
+          <h3>Elite</h3>
+          <div class="plan-price"><span class="currency">₹</span>2,999<span class="period">/mo</span></div>
+        </div>
+        <ul class="plan-features">
+          <li><i class="fas fa-check"></i> Full gym access (24/7)</li>
+          <li><i class="fas fa-check"></i> Premium locker + towel</li>
+          <li><i class="fas fa-check"></i> Unlimited group classes</li>
+          <li><i class="fas fa-check"></i> 4 PT sessions/month</li>
+          <li><i class="fas fa-check"></i> Recovery suite access</li>
+          <li><i class="fas fa-check"></i> App + progress dashboard</li>
+          <li class="disabled"><i class="fas fa-times"></i> Nutrition coaching</li>
+        </ul>
+        <button class="plan-btn featured-btn" onclick="openInquiryModal('Elite')">Get Elite</button>
+      </div>
+      <div class="plan-card reveal">
+        <div class="plan-header">
+          <div class="plan-icon"><i class="fas fa-crown"></i></div>
+          <h3>Champion</h3>
+          <div class="plan-price"><span class="currency">₹</span>4,999<span class="period">/mo</span></div>
+        </div>
+        <ul class="plan-features">
+          <li><i class="fas fa-check"></i> Unlimited 24/7 access</li>
+          <li><i class="fas fa-check"></i> Private locker + towel</li>
+          <li><i class="fas fa-check"></i> Unlimited everything</li>
+          <li><i class="fas fa-check"></i> 8 PT sessions/month</li>
+          <li><i class="fas fa-check"></i> Full recovery suite</li>
+          <li><i class="fas fa-check"></i> Monthly nutrition plan</li>
+          <li><i class="fas fa-check"></i> Guest passes (2/month)</li>
+        </ul>
+        <button class="plan-btn" onclick="openInquiryModal('Champion')">Go Champion</button>
+      </div>
+    </div>
+    <div class="membership-note reveal">
+      <i class="fas fa-info-circle"></i>
+      <p>All plans come with a <strong>7-day free trial</strong>. No credit card required. Cancel anytime on Starter & Elite plans.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== TRANSFORMATION ========== -->
+<section class="transformation section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">Success Stories</div>
+      <h2 class="section-title">Real People. <span class="orange">Real Results.</span></h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        <p>"Lost 18kg in 5 months. The combination of trainer support and nutrition coaching is unmatched. IRONFORGE literally changed my life!"</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face" alt="Vikram" />
+          <div><strong>Vikram Patel</strong><span>Lost 18kg | 5 months</span></div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="testimonial-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        <p>"The boxing classes are insane! Coach Arjun pushes you to limits you didn't know you had. I'm the fittest I've ever been at 42!"</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face" alt="Meera" />
+          <div><strong>Meera Singh</strong><span>42 years old | Boxing champion</span></div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="testimonial-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        <p>"The AI workout planner is a game-changer. Every session is perfectly calibrated for my goals. Gained 8kg of muscle in 4 months."</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&h=60&fit=crop&crop=face" alt="Rahul" />
+          <div><strong>Rahul Kumar</strong><span>Gained 8kg muscle | 4 months</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SCHEDULE / TIMETABLE ========== -->
+<section class="schedule section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">Class Schedule</div>
+      <h2 class="section-title">Weekly <span class="orange">Timetable</span></h2>
+    </div>
+    <div class="schedule-table-wrap reveal">
+      <table class="schedule-table">
+        <thead>
+          <tr>
+            <th>Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th><th>Saturday</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="time-cell">6:00 AM</td>
+            <td><div class="class-slot strength">Strength</div></td>
+            <td><div class="class-slot hiit">HIIT Blast</div></td>
+            <td><div class="class-slot strength">Strength</div></td>
+            <td><div class="class-slot yoga">Yoga Flow</div></td>
+            <td><div class="class-slot strength">Strength</div></td>
+            <td><div class="class-slot hiit">HIIT Blast</div></td>
+          </tr>
+          <tr>
+            <td class="time-cell">9:00 AM</td>
+            <td><div class="class-slot yoga">Yoga Flow</div></td>
+            <td><div class="class-slot boxing">Boxing</div></td>
+            <td><div class="class-slot yoga">Yoga Flow</div></td>
+            <td><div class="class-slot hiit">HIIT Blast</div></td>
+            <td><div class="class-slot yoga">Yoga Flow</div></td>
+            <td><div class="class-slot boxing">Boxing</div></td>
+          </tr>
+          <tr>
+            <td class="time-cell">6:00 PM</td>
+            <td><div class="class-slot boxing">Boxing</div></td>
+            <td><div class="class-slot strength">Strength</div></td>
+            <td><div class="class-slot hiit">HIIT Blast</div></td>
+            <td><div class="class-slot boxing">Boxing</div></td>
+            <td><div class="class-slot hiit">HIIT Blast</div></td>
+            <td><div class="class-slot strength">Strength</div></td>
+          </tr>
+          <tr>
+            <td class="time-cell">8:00 PM</td>
+            <td><div class="class-slot hiit">HIIT Blast</div></td>
+            <td><div class="class-slot yoga">Yoga Flow</div></td>
+            <td><div class="class-slot boxing">Boxing</div></td>
+            <td><div class="class-slot strength">Strength</div></td>
+            <td><div class="class-slot yoga">Yoga Flow</div></td>
+            <td><div class="class-slot yoga">Recovery</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="schedule-legend reveal">
+      <span><div class="leg strength"></div>Strength</span>
+      <span><div class="leg hiit"></div>HIIT</span>
+      <span><div class="leg yoga"></div>Yoga</span>
+      <span><div class="leg boxing"></div>Boxing</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CONTACT ========== -->
+<section id="contact" class="contact section">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <div class="section-tag">Contact Us</div>
+        <h2 class="section-title">Let's Start Your <span class="orange">Journey</span></h2>
+        <div class="contact-details">
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div><strong>Address</strong><p>Plot 42, Fitness District, Bandra West, Mumbai – 400050</p></div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fas fa-phone"></i></div>
+            <div><strong>Phone</strong><p>+91 98765 43210</p></div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+            <div><strong>Email</strong><p>hello@ironforge.in</p></div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fas fa-clock"></i></div>
+            <div><strong>Hours</strong><p>Mon–Fri: 5AM–11PM | Sat–Sun: 6AM–10PM</p></div>
+          </div>
+        </div>
+        <button class="btn-whatsapp" onclick="openWhatsApp('919876543210')">
+          <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+        </button>
+      </div>
+      <div class="contact-form-wrap reveal">
+        <form class="contact-form" onsubmit="submitInquiry(event)">
+          <h3>Send Us a Message</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <input type="text" id="cf-name" placeholder="Your Name" required />
+              <label>Full Name</label>
+            </div>
+            <div class="form-group">
+              <input type="tel" id="cf-phone" placeholder="Phone Number" required />
+              <label>Phone</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <input type="email" id="cf-email" placeholder="Email Address" />
+            <label>Email (Optional)</label>
+          </div>
+          <div class="form-group">
+            <select id="cf-interest">
+              <option value="">Select Interest</option>
+              <option>Membership Inquiry</option>
+              <option>Personal Training</option>
+              <option>Group Classes</option>
+              <option>Nutrition Coaching</option>
+              <option>Corporate Wellness</option>
+            </select>
+            <label>I'm interested in...</label>
+          </div>
+          <div class="form-group">
+            <textarea id="cf-message" placeholder="Your message..." rows="4"></textarea>
+            <label>Message</label>
+          </div>
+          <button type="submit" class="btn-primary full-width"><i class="fas fa-paper-plane"></i> Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+  <div class="footer-top">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo"><span class="logo-iron">IRON</span><span class="logo-forge">FORGE</span></div>
+          <p>Forge your strongest self. Join the community that pushes limits and transforms lives every single day.</p>
+          <div class="footer-social">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#programs">Programs</a></li>
+            <li><a href="#trainers">Trainers</a></li>
+            <li><a href="#membership">Membership</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="#">Personal Training</a></li>
+            <li><a href="#">Nutrition Coaching</a></li>
+            <li><a href="#">Group Classes</a></li>
+            <li><a href="#">Online Coaching</a></li>
+            <li><a href="#">Corporate Wellness</a></li>
+          </ul>
+        </div>
+        <div class="footer-newsletter">
+          <h4>Newsletter</h4>
+          <p>Get free fitness tips and exclusive offers.</p>
+          <div class="newsletter-form">
+            <input type="email" placeholder="Your email" />
+            <button><i class="fas fa-arrow-right"></i></button>
+          </div>
+          <div class="footer-app-btns">
+            <button class="app-btn"><i class="fab fa-apple"></i> App Store</button>
+            <button class="app-btn"><i class="fab fa-google-play"></i> Play Store</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <p>© 2024 IRONFORGE GYM. All rights reserved.</p>
+      <p><a href="#" onclick="openAdminPanel()">Admin</a> | Privacy Policy | Terms of Service</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ========== WHATSAPP FLOAT ========== -->
+<button class="whatsapp-float" onclick="openWhatsApp('919876543210')" title="Chat on WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+  <div class="whatsapp-tooltip">Chat with us!</div>
+</button>
+
+<!-- ========== BACK TO TOP ========== -->
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <i class="fas fa-chevron-up"></i>
+</button>
+
+<!-- ========== TRIAL MODAL ========== -->
+<div id="trialModal" class="modal-overlay" onclick="closeModal('trialModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('trialModal')"><i class="fas fa-times"></i></button>
+    <div class="modal-header">
+      <div class="modal-icon"><i class="fas fa-calendar-check"></i></div>
+      <h2>Book Your FREE Trial Class</h2>
+      <p>Experience IRONFORGE for free. No strings attached.</p>
+    </div>
+    <form class="modal-form" onsubmit="submitTrial(event)">
+      <div class="form-row">
+        <div class="form-group"><input type="text" id="trial-name" placeholder="Full Name" required /><label>Full Name</label></div>
+        <div class="form-group"><input type="tel" id="trial-phone" placeholder="Phone Number" required /><label>Phone</label></div>
+      </div>
+      <div class="form-group"><input type="email" id="trial-email" placeholder="Email Address" /><label>Email</label></div>
+      <div class="form-group">
+        <select id="trial-class">
+          <option value="">Choose Class Type</option>
+          <option>Powerlifting & Strength</option>
+          <option>HIIT Blast</option>
+          <option>Yoga & Mindfulness</option>
+          <option>Boxing & MMA</option>
+          <option>CrossFit X</option>
+          <option>Body Transformation</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><input type="date" id="trial-date" /><label>Preferred Date</label></div>
+        <div class="form-group">
+          <select id="trial-time">
+            <option>6:00 AM</option><option>9:00 AM</option><option>6:00 PM</option><option>8:00 PM</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><textarea id="trial-note" placeholder="Any special requirements or health conditions?" rows="3"></textarea></div>
+      <button type="submit" class="btn-primary full-width"><i class="fas fa-fire"></i> Book My Free Trial</button>
+    </form>
+  </div>
+</div>
+
+<!-- ========== INQUIRY MODAL ========== -->
+<div id="inquiryModal" class="modal-overlay" onclick="closeModal('inquiryModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('inquiryModal')"><i class="fas fa-times"></i></button>
+    <div class="modal-header">
+      <div class="modal-icon"><i class="fas fa-id-card"></i></div>
+      <h2>Membership Inquiry</h2>
+      <p>Tell us about yourself — we'll reach out within 2 hours.</p>
+    </div>
+    <form class="modal-form" onsubmit="submitMembership(event)">
+      <div class="form-row">
+        <div class="form-group"><input type="text" id="inq-name" placeholder="Full Name" required /><label>Full Name</label></div>
+        <div class="form-group"><input type="tel" id="inq-phone" placeholder="Phone Number" required /><label>Phone</label></div>
+      </div>
+      <div class="form-group"><input type="email" id="inq-email" placeholder="Email Address" /><label>Email</label></div>
+      <div class="form-group">
+        <select id="inq-plan"><option value="">Select Plan</option><option>Starter</option><option>Elite</option><option>Champion</option></select>
+        <label>Interested Plan</label>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <select id="inq-goal"><option value="">Fitness Goal</option><option>Weight Loss</option><option>Muscle Gain</option><option>Endurance</option><option>General Fitness</option><option>Sports Performance</option></select>
+        </div>
+        <div class="form-group">
+          <select id="inq-experience"><option value="">Experience Level</option><option>Complete Beginner</option><option>Some Experience</option><option>Intermediate</option><option>Advanced</option></select>
+        </div>
+      </div>
+      <div class="form-group"><textarea id="inq-note" placeholder="Any questions or special requirements?" rows="3"></textarea></div>
+      <button type="submit" class="btn-primary full-width"><i class="fas fa-paper-plane"></i> Submit Inquiry</button>
+    </form>
+  </div>
+</div>
+
+<!-- ========== ADMIN PANEL ========== -->
+<div id="adminPanel" class="modal-overlay admin-overlay" onclick="closeModal('adminPanel')">
+  <div class="modal admin-modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('adminPanel')"><i class="fas fa-times"></i></button>
+    <div id="adminLogin" class="admin-login">
+      <div class="modal-header">
+        <div class="modal-icon"><i class="fas fa-lock"></i></div>
+        <h2>Admin Login</h2>
+      </div>
+      <div class="form-group"><input type="password" id="admin-pass" placeholder="Enter admin password" /><label>Password</label></div>
+      <button class="btn-primary full-width" onclick="adminLogin()"><i class="fas fa-sign-in-alt"></i> Login</button>
+    </div>
+    <div id="adminDashboard" class="admin-dashboard" style="display:none;">
+      <div class="admin-header">
+        <h2><i class="fas fa-tachometer-alt"></i> IRONFORGE Admin Dashboard</h2>
+        <div class="admin-tabs">
+          <button class="admin-tab active" onclick="switchAdminTab('inquiries')">Inquiries</button>
+          <button class="admin-tab" onclick="switchAdminTab('trials')">Trial Bookings</button>
+          <button class="admin-tab" onclick="switchAdminTab('gallery')">Add Photos</button>
+        </div>
+      </div>
+      <div id="admin-inquiries" class="admin-section">
+        <div class="admin-stats-row">
+          <div class="admin-stat"><i class="fas fa-users"></i><div><span id="total-inquiries">0</span><p>Total Inquiries</p></div></div>
+          <div class="admin-stat"><i class="fas fa-calendar"></i><div><span id="total-trials">0</span><p>Trial Bookings</p></div></div>
+          <div class="admin-stat"><i class="fas fa-envelope"></i><div><span id="total-messages">0</span><p>Messages</p></div></div>
+        </div>
+        <h3>Recent Inquiries</h3>
+        <div id="inquiries-list" class="inquiries-list"></div>
+        <button class="btn-danger" onclick="clearData('inquiries')"><i class="fas fa-trash"></i> Clear All</button>
+      </div>
+      <div id="admin-trials" class="admin-section" style="display:none;">
+        <h3>Trial Class Bookings</h3>
+        <div id="trials-list" class="inquiries-list"></div>
+        <button class="btn-danger" onclick="clearData('trials')"><i class="fas fa-trash"></i> Clear All</button>
+      </div>
+      <div id="admin-gallery" class="admin-section" style="display:none;">
+        <h3>Add Gym Photos</h3>
+        <div class="photo-upload-area" onclick="document.getElementById('photo-input').click()">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p>Click to upload gym photos</p>
+          <input type="file" id="photo-input" accept="image/*" multiple style="display:none" onchange="uploadPhotos(event)" />
+        </div>
+        <div id="admin-photos" class="admin-photos-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== LIGHTBOX ========== -->
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+  <div class="lightbox-inner" onclick="event.stopPropagation()">
+    <button class="lightbox-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+    <img id="lightbox-img" src="" alt="" />
+    <p id="lightbox-caption"></p>
+  </div>
+</div>
+
+<!-- ========== SUCCESS TOAST ========== -->
+<div id="toast" class="toast"><i class="fas fa-check-circle"></i> <span id="toast-msg"></span></div>
+
+<script src="app.js"></script>
+</body>
+</html>
