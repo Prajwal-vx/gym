@@ -16,8 +16,10 @@ const STORAGE = {
 window.addEventListener('load', () => {
   setTimeout(() => {
     const loader = document.getElementById('loader');
-    loader.classList.add('hidden');
-    setTimeout(() => loader.remove(), 900);
+    if (loader) {
+      loader.classList.add('hidden');
+      setTimeout(() => loader.remove(), 900);
+    }
   }, 2000);
 });
 
@@ -30,11 +32,14 @@ let ringX = 0, ringY = 0;
 document.addEventListener('mousemove', (e) => {
   cursorX = e.clientX;
   cursorY = e.clientY;
-  dot.style.left = cursorX + 'px';
-  dot.style.top = cursorY + 'px';
+  if (dot) {
+    dot.style.left = cursorX + 'px';
+    dot.style.top = cursorY + 'px';
+  }
 });
 
 function animateRing() {
+  if (!ring) return; // Exit if ring doesn't exist
   ringX += (cursorX - ringX) * 0.12;
   ringY += (cursorY - ringY) * 0.12;
   ring.style.left = ringX + 'px';
@@ -45,12 +50,14 @@ animateRing();
 
 /* ===== PARTICLES ===== */
 const canvas = document.getElementById('particles-canvas');
-const ctx = canvas.getContext('2d');
+const ctx = canvas ? canvas.getContext('2d') : null;
 let particles = [];
 
 function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  if (canvas) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
@@ -60,8 +67,10 @@ class Particle {
     this.reset();
   }
   reset() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
+    const width = canvas?.width || window.innerWidth;
+    const height = canvas?.height || window.innerHeight;
+    this.x = Math.random() * width;
+    this.y = Math.random() * height;
     this.size = Math.random() * 2.5 + 0.5;
     this.speedX = (Math.random() - 0.5) * 0.4;
     this.speedY = (Math.random() - 0.5) * 0.4;
@@ -74,11 +83,14 @@ class Particle {
     this.x += this.speedX;
     this.y += this.speedY;
     this.life++;
-    if (this.life > this.maxLife || this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+    const width = canvas?.width || window.innerWidth;
+    const height = canvas?.height || window.innerHeight;
+    if (this.life > this.maxLife || this.x < 0 || this.x > width || this.y < 0 || this.y > height) {
       this.reset();
     }
   }
   draw() {
+    if (!ctx) return;
     ctx.globalAlpha = this.opacity;
     ctx.fillStyle = this.color;
     ctx.beginPath();
@@ -87,11 +99,14 @@ class Particle {
   }
 }
 
-for (let i = 0; i < 80; i++) {
-  particles.push(new Particle());
+if (canvas && ctx) {
+  for (let i = 0; i < 80; i++) {
+    particles.push(new Particle());
+  }
 }
 
 function drawLines() {
+  if (!ctx) return;
   for (let i = 0; i < particles.length; i++) {
     for (let j = i + 1; j < particles.length; j++) {
       const dx = particles[i].x - particles[j].x;
@@ -110,13 +125,18 @@ function drawLines() {
   }
 }
 
+let particleAnimationId = null;
+
 function animateParticles() {
+  if (!ctx || !canvas) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   particles.forEach(p => { p.update(); p.draw(); });
   drawLines();
-  requestAnimationFrame(animateParticles);
+  particleAnimationId = requestAnimationFrame(animateParticles);
 }
-animateParticles();
+if (canvas && ctx) {
+  animateParticles();
+}
 
 /* ===== NAVBAR ===== */
 const navbar = document.getElementById('navbar');
@@ -126,17 +146,21 @@ window.addEventListener('scroll', () => {
   const scrollY = window.scrollY;
 
   // Navbar
-  if (scrollY > 80) {
-    navbar.classList.add('scrolled');
-  } else {
-    navbar.classList.remove('scrolled');
+  if (navbar) {
+    if (scrollY > 80) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
   }
 
   // Back to top
-  if (scrollY > 400) {
-    backTop.classList.add('visible');
-  } else {
-    backTop.classList.remove('visible');
+  if (backTop) {
+    if (scrollY > 400) {
+      backTop.classList.add('visible');
+    } else {
+      backTop.classList.remove('visible');
+    }
   }
 
   // Reveal elements
@@ -150,15 +174,17 @@ window.addEventListener('scroll', () => {
 function toggleMenu() {
   const hamburger = document.getElementById('hamburger');
   const navLinks = document.getElementById('navLinks');
-  hamburger.classList.toggle('active');
-  navLinks.classList.toggle('open');
+  if (hamburger) hamburger.classList.toggle('active');
+  if (navLinks) navLinks.classList.toggle('open');
 }
 
 // Close menu on link click
 document.querySelectorAll('.nav-links a').forEach(link => {
   link.addEventListener('click', () => {
-    document.getElementById('hamburger').classList.remove('active');
-    document.getElementById('navLinks').classList.remove('open');
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+    if (hamburger) hamburger.classList.remove('active');
+    if (navLinks) navLinks.classList.remove('open');
   });
 });
 
@@ -186,7 +212,9 @@ function triggerCounters() {
     countersTriggered = true;
     document.querySelectorAll('.stat-num').forEach(el => {
       const target = parseInt(el.dataset.target);
-      animateCounter(el, 0, target, 2000);
+      if (!isNaN(target)) {
+        animateCounter(el, 0, target, 2000);
+      }
     });
   }
 }
@@ -208,13 +236,6 @@ function easeOutCubic(t) {
 }
 
 /* ===== SMOOTH SCROLL ===== */
-// NOTE: this was previously named `scrollTo`, which silently overwrote the
-// native `window.scrollTo`. That broke the "back to top" button — its
-// onclick calls window.scrollTo({top:0,...}), which was hitting this
-// function instead and throwing (querySelector doesn't accept an object).
-// It's also why anchor jumps (like "Explore Programs") could look broken:
-// scrollIntoView landed the section flush with the viewport top, right
-// underneath the fixed navbar, hiding the heading it just scrolled to.
 function smoothScrollTo(selector) {
   const el = document.querySelector(selector);
   if (!el) return;
@@ -226,31 +247,42 @@ function smoothScrollTo(selector) {
 
 /* ===== MODALS ===== */
 function openTrialModal() {
-  document.getElementById('trialModal').classList.add('active');
-  document.body.style.overflow = 'hidden';
-  // Set min date to today
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('trial-date').min = today;
+  const modal = document.getElementById('trialModal');
+  if (modal) {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    // Set min date to today
+    const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById('trial-date');
+    if (dateInput) dateInput.min = today;
+  }
 }
 
 function openInquiryModal(plan) {
   const modal = document.getElementById('inquiryModal');
-  modal.classList.add('active');
-  document.body.style.overflow = 'hidden';
-  if (plan) {
-    const planSelect = document.getElementById('inq-plan');
-    for (let i = 0; i < planSelect.options.length; i++) {
-      if (planSelect.options[i].text === plan) {
-        planSelect.selectedIndex = i;
-        break;
+  if (modal) {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    if (plan) {
+      const planSelect = document.getElementById('inq-plan');
+      if (planSelect) {
+        for (let i = 0; i < planSelect.options.length; i++) {
+          if (planSelect.options[i].text === plan) {
+            planSelect.selectedIndex = i;
+            break;
+          }
+        }
       }
     }
   }
 }
 
 function closeModal(id) {
-  document.getElementById(id).classList.remove('active');
-  document.body.style.overflow = '';
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
 }
 
 // Close on Escape
@@ -265,16 +297,24 @@ document.addEventListener('keydown', (e) => {
 /* ===== FORM SUBMISSIONS ===== */
 function submitTrial(e) {
   e.preventDefault();
+  const nameEl = document.getElementById('trial-name');
+  const phoneEl = document.getElementById('trial-phone');
+  const emailEl = document.getElementById('trial-email');
+  const classEl = document.getElementById('trial-class');
+  const dateEl = document.getElementById('trial-date');
+  const timeEl = document.getElementById('trial-time');
+  const noteEl = document.getElementById('trial-note');
+
   const data = {
     id: Date.now(),
     type: 'Trial Booking',
-    name: document.getElementById('trial-name').value,
-    phone: document.getElementById('trial-phone').value,
-    email: document.getElementById('trial-email').value,
-    class: document.getElementById('trial-class').value,
-    date: document.getElementById('trial-date').value,
-    time: document.getElementById('trial-time').value,
-    note: document.getElementById('trial-note').value,
+    name: nameEl?.value || '',
+    phone: phoneEl?.value || '',
+    email: emailEl?.value || '',
+    class: classEl?.value || '',
+    date: dateEl?.value || '',
+    time: timeEl?.value || '',
+    note: noteEl?.value || '',
     timestamp: new Date().toLocaleString(),
   };
   saveData(STORAGE.trials, data);
@@ -285,16 +325,24 @@ function submitTrial(e) {
 
 function submitMembership(e) {
   e.preventDefault();
+  const nameEl = document.getElementById('inq-name');
+  const phoneEl = document.getElementById('inq-phone');
+  const emailEl = document.getElementById('inq-email');
+  const planEl = document.getElementById('inq-plan');
+  const goalEl = document.getElementById('inq-goal');
+  const expEl = document.getElementById('inq-experience');
+  const noteEl = document.getElementById('inq-note');
+
   const data = {
     id: Date.now(),
     type: 'Membership Inquiry',
-    name: document.getElementById('inq-name').value,
-    phone: document.getElementById('inq-phone').value,
-    email: document.getElementById('inq-email').value,
-    plan: document.getElementById('inq-plan').value,
-    goal: document.getElementById('inq-goal').value,
-    experience: document.getElementById('inq-experience').value,
-    note: document.getElementById('inq-note').value,
+    name: nameEl?.value || '',
+    phone: phoneEl?.value || '',
+    email: emailEl?.value || '',
+    plan: planEl?.value || '',
+    goal: goalEl?.value || '',
+    experience: expEl?.value || '',
+    note: noteEl?.value || '',
     timestamp: new Date().toLocaleString(),
   };
   saveData(STORAGE.inquiries, data);
@@ -305,14 +353,20 @@ function submitMembership(e) {
 
 function submitInquiry(e) {
   e.preventDefault();
+  const nameEl = document.getElementById('cf-name');
+  const phoneEl = document.getElementById('cf-phone');
+  const emailEl = document.getElementById('cf-email');
+  const interestEl = document.getElementById('cf-interest');
+  const messageEl = document.getElementById('cf-message');
+
   const data = {
     id: Date.now(),
     type: 'Contact Message',
-    name: document.getElementById('cf-name').value,
-    phone: document.getElementById('cf-phone').value,
-    email: document.getElementById('cf-email').value,
-    interest: document.getElementById('cf-interest').value,
-    message: document.getElementById('cf-message').value,
+    name: nameEl?.value || '',
+    phone: phoneEl?.value || '',
+    email: emailEl?.value || '',
+    interest: interestEl?.value || '',
+    message: messageEl?.value || '',
     timestamp: new Date().toLocaleString(),
   };
   saveData(STORAGE.messages, data);
@@ -322,13 +376,22 @@ function submitInquiry(e) {
 
 /* ===== LOCAL STORAGE ===== */
 function saveData(key, data) {
-  const existing = JSON.parse(localStorage.getItem(key) || '[]');
-  existing.unshift(data);
-  localStorage.setItem(key, JSON.stringify(existing));
+  try {
+    const existing = JSON.parse(localStorage.getItem(key) || '[]');
+    existing.unshift(data);
+    localStorage.setItem(key, JSON.stringify(existing));
+  } catch (err) {
+    console.error('Storage error:', err);
+  }
 }
 
 function getData(key) {
-  return JSON.parse(localStorage.getItem(key) || '[]');
+  try {
+    return JSON.parse(localStorage.getItem(key) || '[]');
+  } catch (err) {
+    console.error('Storage error:', err);
+    return [];
+  }
 }
 
 function clearData(type) {
@@ -342,29 +405,43 @@ function clearData(type) {
 
 /* ===== ADMIN PANEL ===== */
 function openAdminPanel() {
-  document.getElementById('adminPanel').classList.add('active');
-  document.body.style.overflow = 'hidden';
-  document.getElementById('adminDashboard').style.display = 'none';
-  document.getElementById('adminLogin').style.display = 'block';
+  const adminPanel = document.getElementById('adminPanel');
+  const adminLogin = document.getElementById('adminLogin');
+  const adminDashboard = document.getElementById('adminDashboard');
+  
+  if (adminPanel) {
+    adminPanel.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  if (adminDashboard) adminDashboard.style.display = 'none';
+  if (adminLogin) adminLogin.style.display = 'block';
 }
 
 function adminLogin() {
-  const pass = document.getElementById('admin-pass').value;
-  if (pass === 'ironforge2024') {
-    document.getElementById('adminLogin').style.display = 'none';
-    document.getElementById('adminDashboard').style.display = 'block';
+  const pass = document.getElementById('admin-pass');
+  const adminLogin = document.getElementById('adminLogin');
+  const adminDashboard = document.getElementById('adminDashboard');
+  
+  if (!pass) return;
+  
+  if (pass.value === 'ironforge2024') {
+    if (adminLogin) adminLogin.style.display = 'none';
+    if (adminDashboard) adminDashboard.style.display = 'block';
     loadAdminData();
     showToast('Welcome back, Admin! 🔓');
   } else {
-    document.getElementById('admin-pass').style.borderColor = '#dc3545';
-    setTimeout(() => document.getElementById('admin-pass').style.borderColor = '', 1500);
+    pass.style.borderColor = '#dc3545';
+    setTimeout(() => pass.style.borderColor = '', 1500);
     showToast('❌ Incorrect password. Try: ironforge2024');
   }
 }
 
-document.getElementById('admin-pass').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') adminLogin();
-});
+const adminPassInput = document.getElementById('admin-pass');
+if (adminPassInput) {
+  adminPassInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') adminLogin();
+  });
+}
 
 function loadAdminData() {
   loadAdminInquiries();
@@ -377,13 +454,19 @@ function updateAdminStats() {
   const inq = getData(STORAGE.inquiries);
   const tri = getData(STORAGE.trials);
   const msg = getData(STORAGE.messages);
-  document.getElementById('total-inquiries').textContent = inq.length + msg.length;
-  document.getElementById('total-trials').textContent = tri.length;
-  document.getElementById('total-messages').textContent = msg.length;
+  const totalInqEl = document.getElementById('total-inquiries');
+  const totalTriEl = document.getElementById('total-trials');
+  const totalMsgEl = document.getElementById('total-messages');
+  
+  if (totalInqEl) totalInqEl.textContent = inq.length + msg.length;
+  if (totalTriEl) totalTriEl.textContent = tri.length;
+  if (totalMsgEl) totalMsgEl.textContent = msg.length;
 }
 
 function loadAdminInquiries() {
   const inqList = document.getElementById('inquiries-list');
+  if (!inqList) return;
+  
   const inquiries = [...getData(STORAGE.inquiries), ...getData(STORAGE.messages)];
   inquiries.sort((a, b) => b.id - a.id);
   
@@ -405,10 +488,10 @@ function loadAdminInquiries() {
         <small style="color:var(--orange-light)">🕐 ${item.timestamp}</small>
       </p>
       <div style="display:flex;gap:8px;margin-top:12px;">
-        <a href="https://wa.me/${item.phone.replace(/[^0-9]/g,'')}" target="_blank" style="color:#25D366;font-size:0.8rem;text-decoration:none;background:rgba(37,211,102,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(37,211,102,0.2);">
+        <a href="https://wa.me/${item.phone.replace(/[^0-9]/g,'')}" target="_blank" style="color:#25D366;font-size:0.8rem;text-decoration:none;background:rgba(37,211,102,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(37,211,102,0.3);">
           <i class="fab fa-whatsapp"></i> WhatsApp
         </a>
-        <a href="tel:${item.phone}" style="color:var(--orange-light);font-size:0.8rem;text-decoration:none;background:rgba(247,123,0,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(247,123,0,0.2);">
+        <a href="tel:${item.phone}" style="color:var(--orange-light);font-size:0.8rem;text-decoration:none;background:rgba(247,123,0,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(247,123,0,0.3);">
           <i class="fas fa-phone"></i> Call
         </a>
       </div>
@@ -418,6 +501,8 @@ function loadAdminInquiries() {
 
 function loadAdminTrials() {
   const triList = document.getElementById('trials-list');
+  if (!triList) return;
+  
   const trials = getData(STORAGE.trials);
   
   if (trials.length === 0) {
@@ -435,10 +520,10 @@ function loadAdminTrials() {
         <small style="color:var(--orange-light)">🕐 ${item.timestamp}</small>
       </p>
       <div style="display:flex;gap:8px;margin-top:12px;">
-        <a href="https://wa.me/${item.phone.replace(/[^0-9]/g,'')}" target="_blank" style="color:#25D366;font-size:0.8rem;text-decoration:none;background:rgba(37,211,102,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(37,211,102,0.2);">
+        <a href="https://wa.me/${item.phone.replace(/[^0-9]/g,'')}" target="_blank" style="color:#25D366;font-size:0.8rem;text-decoration:none;background:rgba(37,211,102,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(37,211,102,0.3);">
           <i class="fab fa-whatsapp"></i> WhatsApp
         </a>
-        <a href="tel:${item.phone}" style="color:var(--orange-light);font-size:0.8rem;text-decoration:none;background:rgba(247,123,0,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(247,123,0,0.2);">
+        <a href="tel:${item.phone}" style="color:var(--orange-light);font-size:0.8rem;text-decoration:none;background:rgba(247,123,0,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(247,123,0,0.3);">
           <i class="fas fa-phone"></i> Call
         </a>
       </div>
@@ -446,12 +531,16 @@ function loadAdminTrials() {
   `).join('');
 }
 
-function switchAdminTab(tab, element) {
+function switchAdminTab(tab, evt) {
   document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
   
-  element.classList.add('active');
-  document.getElementById('admin-' + tab).style.display = 'block';
+  if (evt && evt.target) {
+    evt.target.classList.add('active');
+  }
+  
+  const section = document.getElementById('admin-' + tab);
+  if (section) section.style.display = 'block';
   
   if (tab === 'gallery') loadAdminPhotos();
 }
@@ -460,6 +549,8 @@ function switchAdminTab(tab, element) {
 function uploadPhotos(e) {
   const files = Array.from(e.target.files);
   const photos = getData(STORAGE.photos);
+  
+  if (files.length === 0) return;
   
   let processed = 0;
   files.forEach(file => {
@@ -480,6 +571,8 @@ function uploadPhotos(e) {
 function loadAdminPhotos() {
   const photos = getData(STORAGE.photos);
   const grid = document.getElementById('admin-photos');
+  if (!grid) return;
+  
   if (photos.length === 0) {
     grid.innerHTML = '<p style="color:var(--gray-mid);font-size:0.875rem;">No photos uploaded yet.</p>';
     return;
@@ -509,23 +602,35 @@ function openWhatsApp(number) {
 function openLightbox(el) {
   const img = el.querySelector('img');
   const caption = el.querySelector('.gallery-overlay span');
-  document.getElementById('lightbox-img').src = img.src;
-  document.getElementById('lightbox-caption').textContent = caption ? caption.textContent : '';
-  document.getElementById('lightbox').classList.add('active');
-  document.body.style.overflow = 'hidden';
+  const lightboxImg = document.getElementById('lightbox-img');
+  const lightboxCaption = document.getElementById('lightbox-caption');
+  const lightbox = document.getElementById('lightbox');
+  
+  if (img && lightboxImg) lightboxImg.src = img.src;
+  if (caption && lightboxCaption) lightboxCaption.textContent = caption.textContent;
+  if (lightbox) {
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
 }
 
 function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('active');
-  document.body.style.overflow = '';
+  const lightbox = document.getElementById('lightbox');
+  if (lightbox) {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+  }
 }
 
 /* ===== TOAST ===== */
 function showToast(msg) {
   const toast = document.getElementById('toast');
-  document.getElementById('toast-msg').textContent = msg;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 4000);
+  const toastMsg = document.getElementById('toast-msg');
+  if (toastMsg) toastMsg.textContent = msg;
+  if (toast) {
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 4000);
+  }
 }
 
 /* ===== PARALLAX HERO BG TEXT ===== */
@@ -574,9 +679,6 @@ window.addEventListener('scroll', () => {
   });
 });
 
-/* ===== TYPING EFFECT IN HERO ===== */
-// Already handled via CSS animation
-
 /* ===== PROGRAM HOVER GLOW ===== */
 document.querySelectorAll('.program-card').forEach(card => {
   card.addEventListener('mouseenter', () => {
@@ -591,7 +693,7 @@ document.querySelectorAll('.program-card').forEach(card => {
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', (e) => {
     const target = anchor.getAttribute('href');
-    if (target.length > 1 && document.querySelector(target)) {
+    if (target && target.length > 1 && document.querySelector(target)) {
       e.preventDefault();
       smoothScrollTo(target);
     }
@@ -604,7 +706,7 @@ if (newsletterBtn) {
   newsletterBtn.addEventListener('click', (e) => {
     e.preventDefault();
     const input = document.querySelector('.newsletter-form input');
-    if (input.value && input.value.includes('@')) {
+    if (input && input.value && input.value.includes('@')) {
       showToast('🎉 Subscribed! Check your inbox for exclusive offers.');
       input.value = '';
     } else {
@@ -615,9 +717,10 @@ if (newsletterBtn) {
 
 /* ===== DYNAMIC YEAR ===== */
 document.addEventListener('DOMContentLoaded', () => {
-  const yearEl = document.querySelector('.footer-bottom p');
-  if (yearEl) {
-    yearEl.textContent = yearEl.textContent.replace('2024', new Date().getFullYear());
+  const yearEls = document.querySelectorAll('.footer-bottom p');
+  if (yearEls.length > 0) {
+    const currentYear = new Date().getFullYear();
+    yearEls[0].textContent = yearEls[0].textContent.replace(/2024/g, currentYear);
   }
 });
 
