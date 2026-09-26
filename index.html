@@ -3,11 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- CSP: restricts script/style/font/image/connect sources. Inline is still
+       required by the existing inline event handlers and JS-injected styles.
+       For a real deployment also send header-based CSP (with frame-ancestors,
+       which <meta> cannot express) — see deploy/nginx.conf.example. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://images.unsplash.com; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'" />
   <title>IRONFORGE GYM — Forge Your Legacy</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;900&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
 
@@ -42,7 +47,7 @@
       <li><a href="#gallery">Gallery</a></li>
       <li><a href="#membership">Membership</a></li>
       <li><a href="#contact">Contact</a></li>
-      <li><a href="#" class="nav-btn" onclick="openTrialModal()">Free Trial</a></li>
+      <li><a href="#" class="nav-btn" onclick="openTrialModal(); return false;">Free Trial</a></li>
     </ul>
     <div class="hamburger" id="hamburger" onclick="toggleMenu()">
       <span></span><span></span><span></span>
@@ -100,7 +105,7 @@
   <div class="ticker">
     <span>STRENGTH TRAINING</span><span class="dot">✦</span>
     <span>CARDIO BLAST</span><span class="dot">✦</span>
-    <span>YOGA & FLEXIBILITY</span><span class="dot">✦</span>
+    <span>YOGA &amp; FLEXIBILITY</span><span class="dot">✦</span>
     <span>BOXING</span><span class="dot">✦</span>
     <span>HIIT CLASSES</span><span class="dot">✦</span>
     <span>NUTRITION COACHING</span><span class="dot">✦</span>
@@ -108,7 +113,7 @@
     <span>BODY TRANSFORMATION</span><span class="dot">✦</span>
     <span>STRENGTH TRAINING</span><span class="dot">✦</span>
     <span>CARDIO BLAST</span><span class="dot">✦</span>
-    <span>YOGA & FLEXIBILITY</span><span class="dot">✦</span>
+    <span>YOGA &amp; FLEXIBILITY</span><span class="dot">✦</span>
     <span>BOXING</span><span class="dot">✦</span>
   </div>
 </div>
@@ -141,10 +146,10 @@
         <div class="about-features">
           <div class="feature-item"><i class="fas fa-check-circle"></i> State-of-the-art equipment worth ₹2 Crore+</div>
           <div class="feature-item"><i class="fas fa-check-circle"></i> AI-powered personalized workout plans</div>
-          <div class="feature-item"><i class="fas fa-check-circle"></i> In-house dietitian & nutrition coaching</div>
-          <div class="feature-item"><i class="fas fa-check-circle"></i> Recovery zone with sauna & ice bath</div>
+          <div class="feature-item"><i class="fas fa-check-circle"></i> In-house dietitian &amp; nutrition coaching</div>
+          <div class="feature-item"><i class="fas fa-check-circle"></i> Recovery zone with sauna &amp; ice bath</div>
           <div class="feature-item"><i class="fas fa-check-circle"></i> 24/7 access for premium members</div>
-          <div class="feature-item"><i class="fas fa-check-circle"></i> Biometric attendance & progress tracking</div>
+          <div class="feature-item"><i class="fas fa-check-circle"></i> Biometric attendance &amp; progress tracking</div>
         </div>
         <button class="btn-primary" onclick="openInquiryModal()">Join The Family <i class="fas fa-arrow-right"></i></button>
       </div>
@@ -215,7 +220,7 @@
         </div>
         <div class="program-info">
           <div class="program-meta"><span class="difficulty hard">Advanced</span><span class="duration"><i class="fas fa-clock"></i> 60 min</span></div>
-          <h3>Powerlifting & Strength</h3>
+          <h3>Powerlifting &amp; Strength</h3>
           <p>Build raw, functional strength with our periodized powerlifting program led by certified coaches.</p>
           <button class="program-btn" onclick="openTrialModal()">Book Trial Class <i class="fas fa-arrow-right"></i></button>
         </div>
@@ -239,7 +244,7 @@
         </div>
         <div class="program-info">
           <div class="program-meta"><span class="difficulty easy">Beginner</span><span class="duration"><i class="fas fa-clock"></i> 60 min</span></div>
-          <h3>Yoga & Mindfulness</h3>
+          <h3>Yoga &amp; Mindfulness</h3>
           <p>Flexibility, balance, and mental clarity through guided yoga sessions for all fitness levels.</p>
           <button class="program-btn" onclick="openTrialModal()">Book Trial Class <i class="fas fa-arrow-right"></i></button>
         </div>
@@ -251,7 +256,7 @@
         </div>
         <div class="program-info">
           <div class="program-meta"><span class="difficulty hard">All Levels</span><span class="duration"><i class="fas fa-clock"></i> 60 min</span></div>
-          <h3>Boxing & MMA</h3>
+          <h3>Boxing &amp; MMA</h3>
           <p>Learn real fighting techniques while getting one of the most complete full-body workouts imaginable.</p>
           <button class="program-btn" onclick="openTrialModal()">Book Trial Class <i class="fas fa-arrow-right"></i></button>
         </div>
@@ -304,7 +309,7 @@
         </div>
         <div class="trainer-info">
           <h3>Rajan Sharma</h3>
-          <p class="trainer-role">Head Coach — Strength & Powerlifting</p>
+          <p class="trainer-role">Head Coach — Strength &amp; Powerlifting</p>
           <div class="trainer-stats">
             <div><span>8+</span><p>Yrs Exp</p></div>
             <div><span>500+</span><p>Clients</p></div>
@@ -326,7 +331,7 @@
         </div>
         <div class="trainer-info">
           <h3>Priya Nair</h3>
-          <p class="trainer-role">Yoga & Wellness Specialist</p>
+          <p class="trainer-role">Yoga &amp; Wellness Specialist</p>
           <div class="trainer-stats">
             <div><span>6+</span><p>Yrs Exp</p></div>
             <div><span>350+</span><p>Clients</p></div>
@@ -348,7 +353,7 @@
         </div>
         <div class="trainer-info">
           <h3>Arjun Mehta</h3>
-          <p class="trainer-role">Boxing & MMA Coach</p>
+          <p class="trainer-role">Boxing &amp; MMA Coach</p>
           <div class="trainer-stats">
             <div><span>10+</span><p>Yrs Exp</p></div>
             <div><span>600+</span><p>Clients</p></div>
@@ -370,7 +375,7 @@
         </div>
         <div class="trainer-info">
           <h3>Sneha Kapoor</h3>
-          <p class="trainer-role">Nutrition Coach & Dietitian</p>
+          <p class="trainer-role">Nutrition Coach &amp; Dietitian</p>
           <div class="trainer-stats">
             <div><span>7+</span><p>Yrs Exp</p></div>
             <div><span>800+</span><p>Clients</p></div>
@@ -485,7 +490,7 @@
     </div>
     <div class="membership-note reveal">
       <i class="fas fa-info-circle"></i>
-      <p>All plans come with a <strong>7-day free trial</strong>. No credit card required. Cancel anytime on Starter & Elite plans.</p>
+      <p>All plans come with a <strong>7-day free trial</strong>. No credit card required. Cancel anytime on Starter &amp; Elite plans.</p>
     </div>
   </div>
 </section>
@@ -651,6 +656,7 @@
             <label>Message</label>
           </div>
           <button type="submit" class="btn-primary full-width"><i class="fas fa-paper-plane"></i> Send Message</button>
+          <button type="button" class="btn-whatsapp full-width" onclick="contactHandoffFromForm()"><i class="fab fa-whatsapp"></i> Or send this message via WhatsApp</button>
         </form>
       </div>
     </div>
@@ -710,7 +716,7 @@
   <div class="footer-bottom">
     <div class="container">
       <p>© 2024 IRONFORGE GYM. All rights reserved.</p>
-      <p><a href="#" onclick="openAdminPanel()">Admin</a> | Privacy Policy | Terms of Service</p>
+      <p><a href="#" onclick="openAdminPanel(); return false;">Admin</a> | Privacy Policy | Terms of Service</p>
     </div>
   </div>
 </footer>
@@ -744,10 +750,10 @@
       <div class="form-group">
         <select id="trial-class">
           <option value="">Choose Class Type</option>
-          <option>Powerlifting & Strength</option>
+          <option>Powerlifting &amp; Strength</option>
           <option>HIIT Blast</option>
-          <option>Yoga & Mindfulness</option>
-          <option>Boxing & MMA</option>
+          <option>Yoga &amp; Mindfulness</option>
+          <option>Boxing &amp; MMA</option>
           <option>CrossFit X</option>
           <option>Body Transformation</option>
         </select>
@@ -762,6 +768,7 @@
       </div>
       <div class="form-group"><textarea id="trial-note" placeholder="Any special requirements or health conditions?" rows="3"></textarea></div>
       <button type="submit" class="btn-primary full-width"><i class="fas fa-fire"></i> Book My Free Trial</button>
+      <button type="button" class="btn-whatsapp full-width" onclick="trialHandoffFromForm()"><i class="fab fa-whatsapp"></i> Or send this booking via WhatsApp</button>
     </form>
   </div>
 </div>
@@ -795,29 +802,49 @@
       </div>
       <div class="form-group"><textarea id="inq-note" placeholder="Any questions or special requirements?" rows="3"></textarea></div>
       <button type="submit" class="btn-primary full-width"><i class="fas fa-paper-plane"></i> Submit Inquiry</button>
+      <button type="button" class="btn-whatsapp full-width" onclick="inquiryHandoffFromForm()"><i class="fab fa-whatsapp"></i> Or send this inquiry via WhatsApp</button>
     </form>
   </div>
 </div>
 
 <!-- ========== ADMIN PANEL ========== -->
+<!-- This is a LOCAL dashboard (no backend): it only shows this browser's
+     stored records. The passcode is client-side UI gating (PBKDF2-hashed,
+     provisioned on first use) — see app.js / SECURITY.md for the model. -->
 <div id="adminPanel" class="modal-overlay admin-overlay" onclick="closeModal('adminPanel')">
   <div class="modal admin-modal" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal('adminPanel')"><i class="fas fa-times"></i></button>
+    <div id="adminSetup" class="admin-login" style="display:none;">
+      <div class="modal-header">
+        <div class="modal-icon"><i class="fas fa-user-shield"></i></div>
+        <h2>Create Admin Passcode</h2>
+      </div>
+      <p class="admin-hint">First run in this browser: choose an admin passcode (min 8 characters). It is stored here only, as a salted hash — never sent anywhere, never embedded in the site.</p>
+      <div class="form-group"><input type="password" id="admin-pass-new" placeholder="New admin passcode (min 8 chars)" maxlength="128" /><label>New passcode</label></div>
+      <div class="form-group"><input type="password" id="admin-pass-confirm" placeholder="Repeat passcode" maxlength="128" /><label>Confirm passcode</label></div>
+      <button class="btn-primary full-width" onclick="adminProvision()"><i class="fas fa-key"></i> Create Passcode</button>
+    </div>
     <div id="adminLogin" class="admin-login">
       <div class="modal-header">
         <div class="modal-icon"><i class="fas fa-lock"></i></div>
         <h2>Admin Login</h2>
       </div>
-      <div class="form-group"><input type="password" id="admin-pass" placeholder="Enter admin password" /><label>Password</label></div>
-      <button class="btn-primary full-width" onclick="adminLogin()"><i class="fas fa-sign-in-alt"></i> Login</button>
+      <div class="form-group"><input type="password" id="admin-pass" placeholder="Enter admin passcode" maxlength="128" /><label>Passcode</label></div>
+      <p id="admin-lock-msg" class="admin-lock-msg" style="display:none;"></p>
+      <button class="btn-primary full-width" onclick="adminLogin()"><i class="fas fa-sign-in-alt"></i> Unlock</button>
+      <button class="link-danger" type="button" onclick="adminResetAccess()"><i class="fas fa-rotate-left"></i> Forgot passcode? Reset local admin data</button>
     </div>
     <div id="adminDashboard" class="admin-dashboard" style="display:none;">
       <div class="admin-header">
         <h2><i class="fas fa-tachometer-alt"></i> IRONFORGE Admin Dashboard</h2>
         <div class="admin-tabs">
-          <button class="admin-tab active" onclick="switchAdminTab('inquiries', event)">Inquiries</button>
-          <button class="admin-tab" onclick="switchAdminTab('trials', event)">Trial Bookings</button>
-          <button class="admin-tab" onclick="switchAdminTab('gallery', event)">Add Photos</button>
+          <button class="admin-tab active" onclick="switchAdminTab('inquiries', this)">Inquiries</button>
+          <button class="admin-tab" onclick="switchAdminTab('trials', this)">Trial Bookings</button>
+          <button class="admin-tab" onclick="switchAdminTab('gallery', this)">Add Photos</button>
+        </div>
+        <div class="admin-actions">
+          <button class="admin-action-btn" type="button" onclick="adminChangePasscode()"><i class="fas fa-key"></i> Change passcode</button>
+          <button class="admin-action-btn" type="button" onclick="closeModal('adminPanel')"><i class="fas fa-lock"></i> Lock dashboard</button>
         </div>
       </div>
       <div id="admin-inquiries" class="admin-section">
@@ -860,6 +887,7 @@
 <!-- ========== SUCCESS TOAST ========== -->
 <div id="toast" class="toast"><i class="fas fa-check-circle"></i> <span id="toast-msg"></span></div>
 
+<script src="js/security-utils.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

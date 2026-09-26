@@ -251,6 +251,9 @@ function openInquiryModal(plan) {
 function closeModal(id) {
   document.getElementById(id).classList.remove('active');
   document.body.style.overflow = '';
+  // Re-lock the admin session whenever the admin panel closes, so an
+  // unattended staff browser does not stay unlocked indefinitely.
+  if (id === 'adminPanel') adminUnlocked = false;
 }
 
 // Close on Escape
@@ -265,19 +268,21 @@ document.addEventListener('keydown', (e) => {
 /* ===== FORM SUBMISSIONS ===== */
 function submitTrial(e) {
   e.preventDefault();
+  const core = validateCoreFields(field('trial-name', FIELD_LIMITS.name), field('trial-phone', FIELD_LIMITS.phone), field('trial-email', FIELD_LIMITS.email));
+  if (!core.ok) return;
   const data = {
     id: Date.now(),
     type: 'Trial Booking',
-    name: document.getElementById('trial-name').value,
-    phone: document.getElementById('trial-phone').value,
-    email: document.getElementById('trial-email').value,
-    class: document.getElementById('trial-class').value,
-    date: document.getElementById('trial-date').value,
-    time: document.getElementById('trial-time').value,
-    note: document.getElementById('trial-note').value,
+    name: core.name,
+    phone: core.phone,
+    email: core.email,
+    class: field('trial-class', FIELD_LIMITS.choice),
+    date: field('trial-date', 10),
+    time: field('trial-time', FIELD_LIMITS.choice),
+    note: field('trial-note', FIELD_LIMITS.note),
     timestamp: new Date().toLocaleString(),
   };
-  saveData(STORAGE.trials, data);
+  if (!saveData(STORAGE.trials, data)) return;
   closeModal('trialModal');
   showToast('🎯 Trial class booked! We\'ll confirm via WhatsApp/call.');
   e.target.reset();
@@ -285,19 +290,21 @@ function submitTrial(e) {
 
 function submitMembership(e) {
   e.preventDefault();
+  const core = validateCoreFields(field('inq-name', FIELD_LIMITS.name), field('inq-phone', FIELD_LIMITS.phone), field('inq-email', FIELD_LIMITS.email));
+  if (!core.ok) return;
   const data = {
     id: Date.now(),
     type: 'Membership Inquiry',
-    name: document.getElementById('inq-name').value,
-    phone: document.getElementById('inq-phone').value,
-    email: document.getElementById('inq-email').value,
-    plan: document.getElementById('inq-plan').value,
-    goal: document.getElementById('inq-goal').value,
-    experience: document.getElementById('inq-experience').value,
-    note: document.getElementById('inq-note').value,
+    name: core.name,
+    phone: core.phone,
+    email: core.email,
+    plan: field('inq-plan', FIELD_LIMITS.choice),
+    goal: field('inq-goal', FIELD_LIMITS.choice),
+    experience: field('inq-experience', FIELD_LIMITS.choice),
+    note: field('inq-note', FIELD_LIMITS.note),
     timestamp: new Date().toLocaleString(),
   };
-  saveData(STORAGE.inquiries, data);
+  if (!saveData(STORAGE.inquiries, data)) return;
   closeModal('inquiryModal');
   showToast('✅ Inquiry received! Our team will contact you within 2 hours.');
   e.target.reset();
@@ -305,30 +312,141 @@ function submitMembership(e) {
 
 function submitInquiry(e) {
   e.preventDefault();
+  const core = validateCoreFields(field('cf-name', FIELD_LIMITS.name), field('cf-phone', FIELD_LIMITS.phone), field('cf-email', FIELD_LIMITS.email));
+  if (!core.ok) return;
   const data = {
     id: Date.now(),
     type: 'Contact Message',
-    name: document.getElementById('cf-name').value,
-    phone: document.getElementById('cf-phone').value,
-    email: document.getElementById('cf-email').value,
-    interest: document.getElementById('cf-interest').value,
-    message: document.getElementById('cf-message').value,
+    name: core.name,
+    phone: core.phone,
+    email: core.email,
+    interest: field('cf-interest', FIELD_LIMITS.choice),
+    message: field('cf-message', FIELD_LIMITS.message),
     timestamp: new Date().toLocaleString(),
   };
-  saveData(STORAGE.messages, data);
+  if (!saveData(STORAGE.messages, data)) return;
   showToast('📩 Message sent! We\'ll get back to you shortly.');
   e.target.reset();
 }
 
 /* ===== LOCAL STORAGE ===== */
-function saveData(key, data) {
-  const existing = JSON.parse(localStorage.getItem(key) || '[]');
-  existing.unshift(data);
-  localStorage.setItem(key, JSON.stringify(existing));
-}
+/* Safety cap: localStorage is small (~5MB); unbounded record growth
+   would throw QuotaExceededError and break all form submissions. */
+var MAX_RECORDS = 200;
 
 function getData(key) {
-  return JSON.parse(localStorage.getItem(key) || '[]');
+  try {
+    const raw = JSON.parse(localStorage.getItem(key) || '[]');
+    return Array.isArray(raw) ? raw : [];
+  } catch (err) {
+    // Corrupted storage must never break the whole app.
+    return [];
+  }
+}
+
+function saveData(key, data) {
+  const existing = getData(key);
+  existing.unshift(data);
+  if (existing.length > MAX_RECORDS) existing.length = MAX_RECORDS;
+  try {
+    localStorage.setItem(key, JSON.stringify(existing));
+    return true;
+  } catch (err) {
+    showToast('⚠️ Could not save — browser storage is full. Free up space or clear old data.');
+    return false;
+  }
+}
+
+/* ===== INPUT VALIDATION (see js/security-utils.js) ===== */
+const FIELD_LIMITS = { name: 80, phone: 24, email: 254, choice: 60, message: 1000, note: 500 };
+
+function field(id, limit) {
+  return clampText(document.getElementById(id).value, limit);
+}
+
+// Validates a form's core fields. Returns {ok, name, phone, email}
+// or {ok:false} after showing a toast explaining why.
+function validateCoreFields(name, phone, email) {
+  if (!name) {
+    showToast('⚠️ Please enter your name.');
+    return { ok: false };
+  }
+  if (!phone || !isValidPhone(phone)) {
+    showToast('⚠️ Please enter a valid phone number.');
+    return { ok: false };
+  }
+  if (email && !isValidEmail(email)) {
+    showToast('⚠️ Please enter a valid email address (or leave it empty).');
+    return { ok: false };
+  }
+  return { ok: true, name: name, phone: phone, email: email };
+}
+
+/* ===== WHATSAPP HANDOFF ===== */
+/* The static site has no backend, so localStorage alone never delivers
+   a lead to the gym. These helpers open a prefilled WhatsApp chat to
+   the gym's number so submissions actually reach a human. */
+const GYM_WHATSAPP = '919876543210';
+
+function waHandoff(title, lines) {
+  const body = lines.filter(function (l) { return l && l.value; })
+    .map(function (l) { return '* ' + l.label + ': ' + l.value; })
+    .join('\n');
+  const text = encodeURIComponent(title + '\n' + body);
+  window.open('https://wa.me/' + GYM_WHATSAPP + '?text=' + text, '_blank', 'noopener');
+}
+
+function trialHandoffFromForm() {
+  const core = validateCoreFields(field('trial-name', FIELD_LIMITS.name), field('trial-phone', FIELD_LIMITS.phone), field('trial-email', FIELD_LIMITS.email));
+  if (!core.ok) return;
+  waHandoff('IRONFORGE — Free trial class booking', [
+    { label: 'Name', value: core.name },
+    { label: 'Phone', value: core.phone },
+    { label: 'Email', value: core.email },
+    { label: 'Class', value: field('trial-class', FIELD_LIMITS.choice) },
+    { label: 'Preferred date', value: field('trial-date', 10) },
+    { label: 'Preferred time', value: field('trial-time', FIELD_LIMITS.choice) },
+    { label: 'Notes', value: field('trial-note', FIELD_LIMITS.note) },
+  ]);
+}
+
+function inquiryHandoffFromForm() {
+  const core = validateCoreFields(field('inq-name', FIELD_LIMITS.name), field('inq-phone', FIELD_LIMITS.phone), field('inq-email', FIELD_LIMITS.email));
+  if (!core.ok) return;
+  waHandoff('IRONFORGE — Membership inquiry', [
+    { label: 'Name', value: core.name },
+    { label: 'Phone', value: core.phone },
+    { label: 'Email', value: core.email },
+    { label: 'Interested plan', value: field('inq-plan', FIELD_LIMITS.choice) },
+    { label: 'Goal', value: field('inq-goal', FIELD_LIMITS.choice) },
+    { label: 'Experience', value: field('inq-experience', FIELD_LIMITS.choice) },
+    { label: 'Notes', value: field('inq-note', FIELD_LIMITS.note) },
+  ]);
+}
+
+function contactHandoffFromForm() {
+  const core = validateCoreFields(field('cf-name', FIELD_LIMITS.name), field('cf-phone', FIELD_LIMITS.phone), field('cf-email', FIELD_LIMITS.email));
+  if (!core.ok) return;
+  waHandoff('IRONFORGE — Contact message', [
+    { label: 'Name', value: core.name },
+    { label: 'Phone', value: core.phone },
+    { label: 'Email', value: core.email },
+    { label: 'Interest', value: field('cf-interest', FIELD_LIMITS.choice) },
+    { label: 'Message', value: field('cf-message', FIELD_LIMITS.message) },
+  ]);
+}
+
+
+/* Escape user-supplied values before injecting them with innerHTML.
+   Without this, a visitor could submit e.g. "<img src=x onerror=...>"
+   as their name and execute script inside the admin dashboard (stored XSS). */
+function escapeHtml(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 function clearData(type) {
@@ -336,34 +454,167 @@ function clearData(type) {
     localStorage.removeItem(STORAGE[type]);
     if (type === 'inquiries') loadAdminInquiries();
     if (type === 'trials') loadAdminTrials();
+    updateAdminStats(); // keep stat counters in sync after clearing
     showToast('Data cleared successfully.');
   }
 }
 
 /* ===== ADMIN PANEL ===== */
+/* SECURITY MODEL (important): this site has no backend, so the admin
+   panel is a LOCAL dashboard — it only shows records stored in this
+   browser's localStorage. The passcode below is verified client-side
+   with PBKDF2 (js/security-utils.js) purely as UI gating + friction;
+   it is NOT a security boundary and contains no secrets.
+   - The passcode is provisioned on first use and stored ONLY as a
+     salted PBKDF2 hash — no default password ships in the source.
+   - 5 failed attempts lock attempts with exponential backoff.
+   See SECURITY.md for how to add a real, server-side backend. */
+
+const AdminAuth = createAdminAuth(typeof localStorage !== 'undefined' ? localStorage : undefined);
+let adminUnlocked = false;
+
+function showAdminView(view) {
+  const setup = document.getElementById('adminSetup');
+  const login = document.getElementById('adminLogin');
+  const dash = document.getElementById('adminDashboard');
+  if (!setup || !login || !dash) return;
+  setup.style.display = view === 'setup' ? 'block' : 'none';
+  login.style.display = view === 'login' ? 'block' : 'none';
+  dash.style.display = view === 'dashboard' ? 'block' : 'none';
+}
+
 function openAdminPanel() {
   document.getElementById('adminPanel').classList.add('active');
   document.body.style.overflow = 'hidden';
-  document.getElementById('adminDashboard').style.display = 'none';
-  document.getElementById('adminLogin').style.display = 'block';
+  adminUnlocked = false;
+  if (!AdminAuth.isProvisioned()) {
+    showAdminView('setup');
+  } else {
+    showAdminView('login');
+    updateLockMessage();
+  }
+}
+
+function adminSetBusy(busy) {
+  ['admin-pass', 'admin-pass-new', 'admin-pass-confirm'].forEach(function (id) {
+    const el = document.getElementById(id);
+    if (el) el.disabled = busy;
+  });
+  document.querySelectorAll('#adminLogin button, #adminSetup button').forEach(function (b) {
+    b.disabled = busy;
+  });
+}
+
+function updateLockMessage() {
+  const msg = document.getElementById('admin-lock-msg');
+  if (!msg) return;
+  const state = AdminAuth.getLockState();
+  if (state.locked) {
+    const secs = Math.ceil(state.retryAfterMs / 1000);
+    msg.textContent = 'Too many failed attempts. Locked for ' + secs + 's.';
+    msg.style.display = 'block';
+  } else if (state.attempts > 0) {
+    msg.textContent = state.attempts + ' failed attempt(s) so far.';
+    msg.style.display = 'block';
+  } else {
+    msg.style.display = 'none';
+  }
+}
+
+// First run on this browser: create the passcode (stored as PBKDF2 hash only).
+function adminProvision() {
+  const a = document.getElementById('admin-pass-new').value;
+  const b = document.getElementById('admin-pass-confirm').value;
+  if (a !== b) {
+    showToast('⚠️ Passcodes do not match.');
+    return;
+  }
+  adminSetBusy(true);
+  AdminAuth.provision(a).then(function () {
+    document.getElementById('admin-pass-new').value = '';
+    document.getElementById('admin-pass-confirm').value = '';
+    unlockAdminDashboard();
+  }).catch(function (err) {
+    showToast('⚠️ ' + err.message);
+  }).then(function () { adminSetBusy(false); });
 }
 
 function adminLogin() {
-  const pass = document.getElementById('admin-pass').value;
-  if (pass === 'ironforge2024') {
-    document.getElementById('adminLogin').style.display = 'none';
-    document.getElementById('adminDashboard').style.display = 'block';
-    loadAdminData();
-    showToast('Welcome back, Admin! 🔓');
-  } else {
-    document.getElementById('admin-pass').style.borderColor = '#dc3545';
-    setTimeout(() => document.getElementById('admin-pass').style.borderColor = '', 1500);
-    showToast('❌ Incorrect password. Try: ironforge2024');
+  const state = AdminAuth.getLockState();
+  if (state.locked) {
+    updateLockMessage();
+    showToast('⚠️ Admin access is temporarily locked. Try again in ' + Math.ceil(state.retryAfterMs / 1000) + 's.');
+    return;
   }
+  const pass = document.getElementById('admin-pass').value;
+  if (!pass) {
+    showToast('⚠️ Enter the admin passcode.');
+    return;
+  }
+  adminSetBusy(true);
+  AdminAuth.verify(pass).then(function (result) {
+    if (result.ok) {
+      document.getElementById('admin-pass').value = '';
+      unlockAdminDashboard();
+    } else if (result.locked) {
+      showToast('⚠️ Too many failed attempts. Locked for ' + Math.ceil(result.retryAfterMs / 1000) + 's.');
+      updateLockMessage();
+    } else if (result.provisionRequired) {
+      showAdminView('setup');
+    } else {
+      showToast('❌ Incorrect passcode.');
+      updateLockMessage();
+    }
+  }).catch(function (err) {
+    showToast('⚠️ ' + err.message);
+  }).then(function () { adminSetBusy(false); });
+}
+
+function unlockAdminDashboard() {
+  adminUnlocked = true;
+  showAdminView('dashboard');
+  loadAdminData();
+  showToast('Welcome back, Admin! 🔓');
+}
+
+// Change passcode: requires the current one.
+function adminChangePasscode() {
+  const current = window.prompt('Enter the CURRENT admin passcode:');
+  if (current == null) return;
+  const next = window.prompt('Enter the NEW passcode (min 8 characters):');
+  if (next == null) return;
+  AdminAuth.change(current, next).then(function (result) {
+    if (result.ok) {
+      showToast('✅ Passcode changed.');
+    } else if (result.locked) {
+      showToast('⚠️ Locked — try again in ' + Math.ceil(result.retryAfterMs / 1000) + 's.');
+    } else {
+      showToast('❌ Current passcode is incorrect, or the new one violates policy.');
+    }
+  }).catch(function (err) {
+    showToast('⚠️ ' + err.message);
+  });
+}
+
+// Forgot passcode: fail-safe reset. Because the dashboard is local-only,
+// wiping the verifier + local records is safe; there is no backdoor.
+function adminResetAccess() {
+  if (!window.confirm('Reset admin access?\n\nThis deletes the passcode AND all locally stored inquiries, trials, messages and photos in THIS browser. This cannot be undone.')) {
+    return;
+  }
+  AdminAuth.reset();
+  Object.keys(STORAGE).forEach(function (k) {
+    try { localStorage.removeItem(STORAGE[k]); } catch (err) { /* ignore */ }
+  });
+  showToast('Admin access reset. Set a new passcode.');
+  showAdminView('setup');
 }
 
 document.getElementById('admin-pass').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') adminLogin();
+});
+document.getElementById('admin-pass-confirm').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') adminProvision();
 });
 
 function loadAdminData() {
@@ -391,29 +642,32 @@ function loadAdminInquiries() {
     inqList.innerHTML = '<p style="color:var(--gray-mid);text-align:center;padding:20px;">No inquiries yet.</p>';
     return;
   }
-  inqList.innerHTML = inquiries.map(item => `
+  inqList.innerHTML = inquiries.map(item => {
+    const phoneDigits = String(item.phone || '').replace(/[^0-9]/g, '');
+    return `
     <div class="inquiry-item">
-      <div class="badge">${item.type}</div>
-      <h4>${item.name} — ${item.phone}</h4>
+      <div class="badge">${escapeHtml(item.type)}</div>
+      <h4>${escapeHtml(item.name)} — ${escapeHtml(item.phone)}</h4>
       <p>
-        ${item.email ? '📧 ' + item.email + '<br>' : ''}
-        ${item.plan ? '📋 Plan: ' + item.plan + '<br>' : ''}
-        ${item.goal ? '🎯 Goal: ' + item.goal + '<br>' : ''}
-        ${item.interest ? '💡 Interest: ' + item.interest + '<br>' : ''}
-        ${item.message ? '💬 ' + item.message + '<br>' : ''}
-        ${item.note ? '📝 ' + item.note + '<br>' : ''}
-        <small style="color:var(--orange-light)">🕐 ${item.timestamp}</small>
+        ${item.email ? '📧 ' + escapeHtml(item.email) + '<br>' : ''}
+        ${item.plan ? '📋 Plan: ' + escapeHtml(item.plan) + '<br>' : ''}
+        ${item.goal ? '🎯 Goal: ' + escapeHtml(item.goal) + '<br>' : ''}
+        ${item.interest ? '💡 Interest: ' + escapeHtml(item.interest) + '<br>' : ''}
+        ${item.message ? '💬 ' + escapeHtml(item.message) + '<br>' : ''}
+        ${item.note ? '📝 ' + escapeHtml(item.note) + '<br>' : ''}
+        <small style="color:var(--orange-light)">🕐 ${escapeHtml(item.timestamp)}</small>
       </p>
       <div style="display:flex;gap:8px;margin-top:12px;">
-        <a href="https://wa.me/${item.phone.replace(/[^0-9]/g,'')}" target="_blank" style="color:#25D366;font-size:0.8rem;text-decoration:none;background:rgba(37,211,102,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(37,211,102,0.2);">
+        <a href="https://wa.me/${phoneDigits}" target="_blank" rel="noopener noreferrer" style="color:#25D366;font-size:0.8rem;text-decoration:none;background:rgba(37,211,102,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(37,211,102,0.2);">
           <i class="fab fa-whatsapp"></i> WhatsApp
         </a>
-        <a href="tel:${item.phone}" style="color:var(--orange-light);font-size:0.8rem;text-decoration:none;background:rgba(247,123,0,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(247,123,0,0.2);">
+        <a href="tel:${escapeHtml(item.phone)}" style="color:var(--orange-light);font-size:0.8rem;text-decoration:none;background:rgba(247,123,0,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(247,123,0,0.2);">
           <i class="fas fa-phone"></i> Call
         </a>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 function loadAdminTrials() {
@@ -424,72 +678,168 @@ function loadAdminTrials() {
     triList.innerHTML = '<p style="color:var(--gray-mid);text-align:center;padding:20px;">No trial bookings yet.</p>';
     return;
   }
-  triList.innerHTML = trials.map(item => `
+  triList.innerHTML = trials.map(item => {
+    const phoneDigits = String(item.phone || '').replace(/[^0-9]/g, '');
+    return `
     <div class="inquiry-item">
-      <div class="badge">Trial - ${item.class || 'Not selected'}</div>
-      <h4>${item.name} — ${item.phone}</h4>
+      <div class="badge">Trial - ${escapeHtml(item.class || 'Not selected')}</div>
+      <h4>${escapeHtml(item.name)} — ${escapeHtml(item.phone)}</h4>
       <p>
-        ${item.email ? '📧 ' + item.email + '<br>' : ''}
-        📅 ${item.date || 'Date not set'} at ${item.time}<br>
-        ${item.note ? '📝 ' + item.note + '<br>' : ''}
-        <small style="color:var(--orange-light)">🕐 ${item.timestamp}</small>
+        ${item.email ? '📧 ' + escapeHtml(item.email) + '<br>' : ''}
+        📅 ${escapeHtml(item.date || 'Date not set')} at ${escapeHtml(item.time)}<br>
+        ${item.note ? '📝 ' + escapeHtml(item.note) + '<br>' : ''}
+        <small style="color:var(--orange-light)">🕐 ${escapeHtml(item.timestamp)}</small>
       </p>
       <div style="display:flex;gap:8px;margin-top:12px;">
-        <a href="https://wa.me/${item.phone.replace(/[^0-9]/g,'')}" target="_blank" style="color:#25D366;font-size:0.8rem;text-decoration:none;background:rgba(37,211,102,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(37,211,102,0.2);">
+        <a href="https://wa.me/${phoneDigits}" target="_blank" rel="noopener noreferrer" style="color:#25D366;font-size:0.8rem;text-decoration:none;background:rgba(37,211,102,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(37,211,102,0.2);">
           <i class="fab fa-whatsapp"></i> WhatsApp
         </a>
-        <a href="tel:${item.phone}" style="color:var(--orange-light);font-size:0.8rem;text-decoration:none;background:rgba(247,123,0,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(247,123,0,0.2);">
+        <a href="tel:${escapeHtml(item.phone)}" style="color:var(--orange-light);font-size:0.8rem;text-decoration:none;background:rgba(247,123,0,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(247,123,0,0.2);">
           <i class="fas fa-phone"></i> Call
         </a>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 function switchAdminTab(tab, element) {
+  // Defensive: accept either the clicked button element or the event object.
+  // The inline handlers used to pass `event` (an Event instance, which has no
+  // classList) — that threw a TypeError after all sections were already
+  // hidden, blanking out the dashboard. Passing `this` from the HTML is best.
+  const btn = element instanceof Event ? element.currentTarget : element;
+
   document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
-  
-  element.classList.add('active');
+
+  if (btn) btn.classList.add('active');
   document.getElementById('admin-' + tab).style.display = 'block';
-  
+
   if (tab === 'gallery') loadAdminPhotos();
 }
 
 /* ===== PHOTO UPLOAD ===== */
-function uploadPhotos(e) {
-  const files = Array.from(e.target.files);
-  const photos = getData(STORAGE.photos);
-  
-  let processed = 0;
-  files.forEach(file => {
+/* Upload hardening (client-side; the browser is the only "server"):
+   - Never trust file.name or file.type: verify magic bytes.
+   - Reject non-raster images (SVG can carry script).
+   - Cap per-file size and total count (localStorage is ~5MB).
+   - Render the grid with DOM APIs (textContent/setAttribute) so a
+     crafted filename can never inject HTML/attributes (stored XSS). */
+const MAX_PHOTO_BYTES = 5 * 1024 * 1024; // 5 MB per photo
+const MAX_PHOTOS = 20;                   // total photos kept
+
+function readMagicBytes(file) {
+  return file.slice(0, 16).arrayBuffer().then(function (buf) {
+    return new Uint8Array(buf);
+  });
+}
+
+function readFileAsDataURL(file) {
+  return new Promise(function (resolve, reject) {
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      photos.push({ id: Date.now() + processed, src: ev.target.result, name: file.name });
-      processed++;
-      if (processed === files.length) {
-        localStorage.setItem(STORAGE.photos, JSON.stringify(photos));
-        loadAdminPhotos();
-        showToast(`✅ ${files.length} photo(s) uploaded successfully!`);
-      }
-    };
+    reader.onload = function () { resolve(reader.result); };
+    reader.onerror = function () { reject(reader.error || new Error('Read failed')); };
     reader.readAsDataURL(file);
   });
+}
+
+async function uploadPhotos(e) {
+  const input = e.target;
+  const files = Array.from(input.files || []);
+  input.value = ''; // allow re-selecting the same file later
+  if (files.length === 0) return;
+
+  const photos = getData(STORAGE.photos);
+  const rejected = [];
+  let accepted = 0;
+
+  for (const file of files) {
+    if (photos.length + accepted >= MAX_PHOTOS) {
+      rejected.push(file.name + ': storage limit (' + MAX_PHOTOS + ' photos)');
+      continue;
+    }
+    if (file.size > MAX_PHOTO_BYTES) {
+      rejected.push(file.name + ': too large (max 5 MB)');
+      continue;
+    }
+    try {
+      const magic = await readMagicBytes(file);
+      const type = sniffImageType(magic);
+      if (!type) {
+        rejected.push(file.name + ': not a supported image (png/jpg/gif/webp)');
+        continue;
+      }
+      const dataUrl = await readFileAsDataURL(file);
+      if (!isValidImageDataUrl(dataUrl)) {
+        rejected.push(file.name + ': invalid image data');
+        continue;
+      }
+      photos.push({ id: Date.now() + accepted, src: dataUrl, name: clampText(file.name, 120) });
+      accepted++;
+    } catch (err) {
+      rejected.push(file.name + ': could not be read');
+    }
+  }
+
+  if (accepted > 0) {
+    try {
+      localStorage.setItem(STORAGE.photos, JSON.stringify(photos));
+      loadAdminPhotos();
+      showToast('✅ ' + accepted + ' photo(s) added' + (rejected.length ? ' — ' + rejected.length + ' skipped.' : '!'));
+    } catch (err) {
+      showToast('⚠️ Storage full — upload fewer or smaller photos.');
+      loadAdminPhotos();
+    }
+  } else {
+    showToast('⚠️ ' + rejected.join(' · '));
+  }
 }
 
 function loadAdminPhotos() {
   const photos = getData(STORAGE.photos);
   const grid = document.getElementById('admin-photos');
-  if (photos.length === 0) {
-    grid.innerHTML = '<p style="color:var(--gray-mid);font-size:0.875rem;">No photos uploaded yet.</p>';
+  // Rebuild exclusively with DOM APIs — no innerHTML with dynamic data.
+  grid.textContent = '';
+
+  const visible = photos.filter(function (p) {
+    // Skip entries with tampered or legacy-invalid sources.
+    return p && isValidImageDataUrl(p.src);
+  });
+
+  if (visible.length === 0) {
+    const p = document.createElement('p');
+    p.style.color = 'var(--gray-mid)';
+    p.style.fontSize = '0.875rem';
+    p.textContent = photos.length
+      ? 'No displayable photos (invalid or corrupted entries were skipped).'
+      : 'No photos uploaded yet.';
+    grid.appendChild(p);
     return;
   }
-  grid.innerHTML = photos.map(p => `
-    <div class="admin-photo-item">
-      <img src="${p.src}" alt="${p.name}" />
-      <button onclick="deletePhoto(${p.id})"><i class="fas fa-times"></i></button>
-    </div>
-  `).join('');
+
+  visible.forEach(function (p) {
+    const item = document.createElement('div');
+    item.className = 'admin-photo-item';
+
+    const img = document.createElement('img');
+    img.setAttribute('src', p.src); // allowlisted data: URL only
+    img.setAttribute('alt', clampText(p.name, 120)); // text-safe alt
+    img.setAttribute('loading', 'lazy');
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.title = 'Delete photo';
+    btn.setAttribute('aria-label', 'Delete photo');
+    const icon = document.createElement('i');
+    icon.className = 'fas fa-times';
+    btn.appendChild(icon);
+    btn.addEventListener('click', function () { deletePhoto(p.id); });
+
+    item.appendChild(img);
+    item.appendChild(btn);
+    grid.appendChild(item);
+  });
 }
 
 function deletePhoto(id) {
@@ -502,7 +852,7 @@ function deletePhoto(id) {
 /* ===== WHATSAPP ===== */
 function openWhatsApp(number) {
   const msg = encodeURIComponent("Hello IRONFORGE! I'm interested in your gym services. Can you help me?");
-  window.open(`https://wa.me/${number}?text=${msg}`, '_blank');
+  window.open(`https://wa.me/${number}?text=${msg}`, '_blank', 'noopener,noreferrer');
 }
 
 /* ===== GALLERY LIGHTBOX ===== */
@@ -604,7 +954,8 @@ if (newsletterBtn) {
   newsletterBtn.addEventListener('click', (e) => {
     e.preventDefault();
     const input = document.querySelector('.newsletter-form input');
-    if (input.value && input.value.includes('@')) {
+    const email = clampText(input.value, 254);
+    if (isValidEmail(email)) {
       showToast('🎉 Subscribed! Check your inbox for exclusive offers.');
       input.value = '';
     } else {
@@ -654,4 +1005,4 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log('%cIRONFORGE GYM', 'color:#F77B00;font-size:2em;font-weight:bold;font-family:monospace');
-console.log('%cAdmin Panel: Click "Admin" link in footer | Password: ironforge2024', 'color:#848E95');
+console.log('%cInfo: form submissions and the admin dashboard are stored locally in THIS browser only (static site, no backend).', 'color:#848E95');

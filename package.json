@@ -1,0 +1,14 @@
+{
+  "name": "ironforge-gym",
+  "version": "1.0.0",
+  "private": true,
+  "description": "IRONFORGE GYM static site (vanilla HTML/CSS/JS). No runtime dependencies.",
+  "scripts": {
+    "test": "node --test tests/security.test.mjs",
+    "check": "node --check js/security-utils.js && node --check app.js",
+    "serve": "node tools/dev-server.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

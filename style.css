@@ -1376,3 +1376,60 @@ body:has(button:hover) .cursor-ring {
   .about-features { grid-template-columns: 1fr; }
   .section { padding: 60px 0; }
 }
+/* ========== ADMIN SECURITY UI (passcode setup, lockout, actions) ========== */
+.admin-hint {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--gray-mid);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+.admin-lock-msg {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ffb020;
+  background: rgba(255,176,32,0.08);
+  border: 1px solid rgba(255,176,32,0.25);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 12px 0 0;
+}
+.link-danger {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--gray-mid);
+  font-size: 0.78rem;
+  cursor: pointer;
+  margin-top: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.link-danger:hover { color: #dc3545; }
+.admin-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.admin-action-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--gray-mid);
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.admin-action-btn:hover { color: var(--orange); border-color: rgba(247,123,0,0.4); }
+.modal-form button + button { margin-top: 10px; }
+.admin-login button + button { margin-top: 12px; }
