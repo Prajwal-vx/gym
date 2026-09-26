@@ -208,9 +208,20 @@ function easeOutCubic(t) {
 }
 
 /* ===== SMOOTH SCROLL ===== */
-function scrollTo(selector) {
+// NOTE: this was previously named `scrollTo`, which silently overwrote the
+// native `window.scrollTo`. That broke the "back to top" button — its
+// onclick calls window.scrollTo({top:0,...}), which was hitting this
+// function instead and throwing (querySelector doesn't accept an object).
+// It's also why anchor jumps (like "Explore Programs") could look broken:
+// scrollIntoView landed the section flush with the viewport top, right
+// underneath the fixed navbar, hiding the heading it just scrolled to.
+function smoothScrollTo(selector) {
   const el = document.querySelector(selector);
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (!el) return;
+  const navbar = document.getElementById('navbar');
+  const offset = (navbar ? navbar.offsetHeight : 0) + 20; // clear the fixed navbar
+  const top = el.getBoundingClientRect().top + window.pageYOffset - offset;
+  window.scrollTo({ top, behavior: 'smooth' });
 }
 
 /* ===== MODALS ===== */
@@ -435,11 +446,11 @@ function loadAdminTrials() {
   `).join('');
 }
 
-function switchAdminTab(tab) {
+function switchAdminTab(tab, element) {
   document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
   
-  event.target.classList.add('active');
+  element.classList.add('active');
   document.getElementById('admin-' + tab).style.display = 'block';
   
   if (tab === 'gallery') loadAdminPhotos();
@@ -582,7 +593,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     const target = anchor.getAttribute('href');
     if (target.length > 1 && document.querySelector(target)) {
       e.preventDefault();
-      document.querySelector(target).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      smoothScrollTo(target);
     }
   });
 });

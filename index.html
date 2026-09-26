@@ -63,7 +63,7 @@
     <p class="hero-sub">Where iron meets ambition. Train harder, recover smarter, and transform into the athlete you were meant to be.</p>
     <div class="hero-cta">
       <button class="btn-primary" onclick="openTrialModal()"><i class="fas fa-fire"></i> Book Free Trial</button>
-      <button class="btn-secondary" onclick="scrollTo('#programs')"><i class="fas fa-play"></i> Explore Programs</button>
+      <button class="btn-secondary" onclick="smoothScrollTo('#programs')"><i class="fas fa-play"></i> Explore Programs</button>
     </div>
     <div class="hero-stats">
       <div class="stat"><span class="stat-num" data-target="2500">0</span><span>+</span><p>Members</p></div>
@@ -815,9 +815,9 @@
       <div class="admin-header">
         <h2><i class="fas fa-tachometer-alt"></i> IRONFORGE Admin Dashboard</h2>
         <div class="admin-tabs">
-          <button class="admin-tab active" onclick="switchAdminTab('inquiries')">Inquiries</button>
-          <button class="admin-tab" onclick="switchAdminTab('trials')">Trial Bookings</button>
-          <button class="admin-tab" onclick="switchAdminTab('gallery')">Add Photos</button>
+          <button class="admin-tab active" onclick="switchAdminTab('inquiries', event)">Inquiries</button>
+          <button class="admin-tab" onclick="switchAdminTab('trials', event)">Trial Bookings</button>
+          <button class="admin-tab" onclick="switchAdminTab('gallery', event)">Add Photos</button>
         </div>
       </div>
       <div id="admin-inquiries" class="admin-section">
