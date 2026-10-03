@@ -1376,6 +1376,7 @@ body:has(button:hover) .cursor-ring {
   .about-features { grid-template-columns: 1fr; }
   .section { padding: 60px 0; }
 }
+<<<<<<< HEAD
 /* ========== ADMIN SECURITY UI (passcode setup, lockout, actions) ========== */
 .admin-hint {
   font-size: 0.8rem;
@@ -1433,3 +1434,5 @@ body:has(button:hover) .cursor-ring {
 .admin-action-btn:hover { color: var(--orange); border-color: rgba(247,123,0,0.4); }
 .modal-form button + button { margin-top: 10px; }
 .admin-login button + button { margin-top: 12px; }
+=======
+>>>>>>> cf6ebfb438737811e75c5b8b522308159233894d
