@@ -236,7 +236,6 @@ function easeOutCubic(t) {
 }
 
 /* ===== SMOOTH SCROLL ===== */
-<<<<<<< HEAD
 // NOTE: this was previously named `scrollTo`, which silently overwrote the
 // native `window.scrollTo`. That broke the "back to top" button — its
 // onclick calls window.scrollTo({top:0,...}), which was hitting this
@@ -244,8 +243,6 @@ function easeOutCubic(t) {
 // It's also why anchor jumps (like "Explore Programs") could look broken:
 // scrollIntoView landed the section flush with the viewport top, right
 // underneath the fixed navbar, hiding the heading it just scrolled to.
-=======
->>>>>>> cf6ebfb438737811e75c5b8b522308159233894d
 function smoothScrollTo(selector) {
   const el = document.querySelector(selector);
   if (!el) return;
@@ -288,19 +285,14 @@ function openInquiryModal(plan) {
 }
 
 function closeModal(id) {
-<<<<<<< HEAD
-  document.getElementById(id).classList.remove('active');
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.classList.remove('active');
+  }
   document.body.style.overflow = '';
   // Re-lock the admin session whenever the admin panel closes, so an
   // unattended staff browser does not stay unlocked indefinitely.
   if (id === 'adminPanel') adminUnlocked = false;
-=======
-  const modal = document.getElementById(id);
-  if (modal) {
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-  }
->>>>>>> cf6ebfb438737811e75c5b8b522308159233894d
 }
 
 // Close on Escape
@@ -315,7 +307,6 @@ document.addEventListener('keydown', (e) => {
 /* ===== FORM SUBMISSIONS ===== */
 function submitTrial(e) {
   e.preventDefault();
-<<<<<<< HEAD
   const core = validateCoreFields(field('trial-name', FIELD_LIMITS.name), field('trial-phone', FIELD_LIMITS.phone), field('trial-email', FIELD_LIMITS.email));
   if (!core.ok) return;
   const data = {
@@ -328,26 +319,6 @@ function submitTrial(e) {
     date: field('trial-date', 10),
     time: field('trial-time', FIELD_LIMITS.choice),
     note: field('trial-note', FIELD_LIMITS.note),
-=======
-  const nameEl = document.getElementById('trial-name');
-  const phoneEl = document.getElementById('trial-phone');
-  const emailEl = document.getElementById('trial-email');
-  const classEl = document.getElementById('trial-class');
-  const dateEl = document.getElementById('trial-date');
-  const timeEl = document.getElementById('trial-time');
-  const noteEl = document.getElementById('trial-note');
-
-  const data = {
-    id: Date.now(),
-    type: 'Trial Booking',
-    name: nameEl?.value || '',
-    phone: phoneEl?.value || '',
-    email: emailEl?.value || '',
-    class: classEl?.value || '',
-    date: dateEl?.value || '',
-    time: timeEl?.value || '',
-    note: noteEl?.value || '',
->>>>>>> cf6ebfb438737811e75c5b8b522308159233894d
     timestamp: new Date().toLocaleString(),
   };
   if (!saveData(STORAGE.trials, data)) return;
@@ -358,7 +329,6 @@ function submitTrial(e) {
 
 function submitMembership(e) {
   e.preventDefault();
-<<<<<<< HEAD
   const core = validateCoreFields(field('inq-name', FIELD_LIMITS.name), field('inq-phone', FIELD_LIMITS.phone), field('inq-email', FIELD_LIMITS.email));
   if (!core.ok) return;
   const data = {
@@ -371,26 +341,6 @@ function submitMembership(e) {
     goal: field('inq-goal', FIELD_LIMITS.choice),
     experience: field('inq-experience', FIELD_LIMITS.choice),
     note: field('inq-note', FIELD_LIMITS.note),
-=======
-  const nameEl = document.getElementById('inq-name');
-  const phoneEl = document.getElementById('inq-phone');
-  const emailEl = document.getElementById('inq-email');
-  const planEl = document.getElementById('inq-plan');
-  const goalEl = document.getElementById('inq-goal');
-  const expEl = document.getElementById('inq-experience');
-  const noteEl = document.getElementById('inq-note');
-
-  const data = {
-    id: Date.now(),
-    type: 'Membership Inquiry',
-    name: nameEl?.value || '',
-    phone: phoneEl?.value || '',
-    email: emailEl?.value || '',
-    plan: planEl?.value || '',
-    goal: goalEl?.value || '',
-    experience: expEl?.value || '',
-    note: noteEl?.value || '',
->>>>>>> cf6ebfb438737811e75c5b8b522308159233894d
     timestamp: new Date().toLocaleString(),
   };
   if (!saveData(STORAGE.inquiries, data)) return;
@@ -401,7 +351,6 @@ function submitMembership(e) {
 
 function submitInquiry(e) {
   e.preventDefault();
-<<<<<<< HEAD
   const core = validateCoreFields(field('cf-name', FIELD_LIMITS.name), field('cf-phone', FIELD_LIMITS.phone), field('cf-email', FIELD_LIMITS.email));
   if (!core.ok) return;
   const data = {
@@ -412,22 +361,6 @@ function submitInquiry(e) {
     email: core.email,
     interest: field('cf-interest', FIELD_LIMITS.choice),
     message: field('cf-message', FIELD_LIMITS.message),
-=======
-  const nameEl = document.getElementById('cf-name');
-  const phoneEl = document.getElementById('cf-phone');
-  const emailEl = document.getElementById('cf-email');
-  const interestEl = document.getElementById('cf-interest');
-  const messageEl = document.getElementById('cf-message');
-
-  const data = {
-    id: Date.now(),
-    type: 'Contact Message',
-    name: nameEl?.value || '',
-    phone: phoneEl?.value || '',
-    email: emailEl?.value || '',
-    interest: interestEl?.value || '',
-    message: messageEl?.value || '',
->>>>>>> cf6ebfb438737811e75c5b8b522308159233894d
     timestamp: new Date().toLocaleString(),
   };
   if (!saveData(STORAGE.messages, data)) return;
@@ -436,10 +369,9 @@ function submitInquiry(e) {
 }
 
 /* ===== LOCAL STORAGE ===== */
-<<<<<<< HEAD
 /* Safety cap: localStorage is small (~5MB); unbounded record growth
    would throw QuotaExceededError and break all form submissions. */
-var MAX_RECORDS = 200;
+const MAX_RECORDS = 200;
 
 function getData(key) {
   try {
@@ -468,7 +400,8 @@ function saveData(key, data) {
 const FIELD_LIMITS = { name: 80, phone: 24, email: 254, choice: 60, message: 1000, note: 500 };
 
 function field(id, limit) {
-  return clampText(document.getElementById(id).value, limit);
+  const el = document.getElementById(id);
+  return clampText(el ? el.value : '', limit);
 }
 
 // Validates a form's core fields. Returns {ok, name, phone, email}
@@ -543,7 +476,6 @@ function contactHandoffFromForm() {
   ]);
 }
 
-
 /* Escape user-supplied values before injecting them with innerHTML.
    Without this, a visitor could submit e.g. "<img src=x onerror=...>"
    as their name and execute script inside the admin dashboard (stored XSS). */
@@ -554,25 +486,6 @@ function escapeHtml(value) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
-=======
-function saveData(key, data) {
-  try {
-    const existing = JSON.parse(localStorage.getItem(key) || '[]');
-    existing.unshift(data);
-    localStorage.setItem(key, JSON.stringify(existing));
-  } catch (err) {
-    console.error('Storage error:', err);
-  }
-}
-
-function getData(key) {
-  try {
-    return JSON.parse(localStorage.getItem(key) || '[]');
-  } catch (err) {
-    console.error('Storage error:', err);
-    return [];
-  }
->>>>>>> cf6ebfb438737811e75c5b8b522308159233894d
 }
 
 function clearData(type) {
@@ -610,8 +523,10 @@ function showAdminView(view) {
 }
 
 function openAdminPanel() {
-<<<<<<< HEAD
-  document.getElementById('adminPanel').classList.add('active');
+  const panel = document.getElementById('adminPanel');
+  if (panel) {
+    panel.classList.add('active');
+  }
   document.body.style.overflow = 'hidden';
   adminUnlocked = false;
   if (!AdminAuth.isProvisioned()) {
@@ -650,16 +565,19 @@ function updateLockMessage() {
 
 // First run on this browser: create the passcode (stored as PBKDF2 hash only).
 function adminProvision() {
-  const a = document.getElementById('admin-pass-new').value;
-  const b = document.getElementById('admin-pass-confirm').value;
+  const passNew = document.getElementById('admin-pass-new');
+  const passConfirm = document.getElementById('admin-pass-confirm');
+  if (!passNew || !passConfirm) return;
+  const a = passNew.value;
+  const b = passConfirm.value;
   if (a !== b) {
     showToast('⚠️ Passcodes do not match.');
     return;
   }
   adminSetBusy(true);
   AdminAuth.provision(a).then(function () {
-    document.getElementById('admin-pass-new').value = '';
-    document.getElementById('admin-pass-confirm').value = '';
+    passNew.value = '';
+    passConfirm.value = '';
     unlockAdminDashboard();
   }).catch(function (err) {
     showToast('⚠️ ' + err.message);
@@ -672,38 +590,9 @@ function adminLogin() {
     updateLockMessage();
     showToast('⚠️ Admin access is temporarily locked. Try again in ' + Math.ceil(state.retryAfterMs / 1000) + 's.');
     return;
-=======
-  const adminPanel = document.getElementById('adminPanel');
-  const adminLogin = document.getElementById('adminLogin');
-  const adminDashboard = document.getElementById('adminDashboard');
-  
-  if (adminPanel) {
-    adminPanel.classList.add('active');
-    document.body.style.overflow = 'hidden';
   }
-  if (adminDashboard) adminDashboard.style.display = 'none';
-  if (adminLogin) adminLogin.style.display = 'block';
-}
-
-function adminLogin() {
-  const pass = document.getElementById('admin-pass');
-  const adminLogin = document.getElementById('adminLogin');
-  const adminDashboard = document.getElementById('adminDashboard');
-  
-  if (!pass) return;
-  
-  if (pass.value === 'ironforge2024') {
-    if (adminLogin) adminLogin.style.display = 'none';
-    if (adminDashboard) adminDashboard.style.display = 'block';
-    loadAdminData();
-    showToast('Welcome back, Admin! 🔓');
-  } else {
-    pass.style.borderColor = '#dc3545';
-    setTimeout(() => pass.style.borderColor = '', 1500);
-    showToast('❌ Incorrect password. Try: ironforge2024');
->>>>>>> cf6ebfb438737811e75c5b8b522308159233894d
-  }
-  const pass = document.getElementById('admin-pass').value;
+  const passInput = document.getElementById('admin-pass');
+  const pass = passInput ? passInput.value : '';
   if (!pass) {
     showToast('⚠️ Enter the admin passcode.');
     return;
@@ -711,7 +600,7 @@ function adminLogin() {
   adminSetBusy(true);
   AdminAuth.verify(pass).then(function (result) {
     if (result.ok) {
-      document.getElementById('admin-pass').value = '';
+      if (passInput) passInput.value = '';
       unlockAdminDashboard();
     } else if (result.locked) {
       showToast('⚠️ Too many failed attempts. Locked for ' + Math.ceil(result.retryAfterMs / 1000) + 's.');
@@ -767,21 +656,18 @@ function adminResetAccess() {
   showAdminView('setup');
 }
 
-<<<<<<< HEAD
-document.getElementById('admin-pass').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') adminLogin();
-});
-document.getElementById('admin-pass-confirm').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') adminProvision();
-});
-=======
 const adminPassInput = document.getElementById('admin-pass');
 if (adminPassInput) {
   adminPassInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') adminLogin();
   });
 }
->>>>>>> cf6ebfb438737811e75c5b8b522308159233894d
+const adminPassConfirmInput = document.getElementById('admin-pass-confirm');
+if (adminPassConfirmInput) {
+  adminPassConfirmInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') adminProvision();
+  });
+}
 
 function loadAdminData() {
   loadAdminInquiries();
@@ -830,17 +716,10 @@ function loadAdminInquiries() {
         <small style="color:var(--orange-light)">🕐 ${escapeHtml(item.timestamp)}</small>
       </p>
       <div style="display:flex;gap:8px;margin-top:12px;">
-<<<<<<< HEAD
         <a href="https://wa.me/${phoneDigits}" target="_blank" rel="noopener noreferrer" style="color:#25D366;font-size:0.8rem;text-decoration:none;background:rgba(37,211,102,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(37,211,102,0.2);">
           <i class="fab fa-whatsapp"></i> WhatsApp
         </a>
         <a href="tel:${escapeHtml(item.phone)}" style="color:var(--orange-light);font-size:0.8rem;text-decoration:none;background:rgba(247,123,0,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(247,123,0,0.2);">
-=======
-        <a href="https://wa.me/${item.phone.replace(/[^0-9]/g,'')}" target="_blank" style="color:#25D366;font-size:0.8rem;text-decoration:none;background:rgba(37,211,102,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(37,211,102,0.3);">
-          <i class="fab fa-whatsapp"></i> WhatsApp
-        </a>
-        <a href="tel:${item.phone}" style="color:var(--orange-light);font-size:0.8rem;text-decoration:none;background:rgba(247,123,0,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(247,123,0,0.3);">
->>>>>>> cf6ebfb438737811e75c5b8b522308159233894d
           <i class="fas fa-phone"></i> Call
         </a>
       </div>
@@ -872,17 +751,10 @@ function loadAdminTrials() {
         <small style="color:var(--orange-light)">🕐 ${escapeHtml(item.timestamp)}</small>
       </p>
       <div style="display:flex;gap:8px;margin-top:12px;">
-<<<<<<< HEAD
         <a href="https://wa.me/${phoneDigits}" target="_blank" rel="noopener noreferrer" style="color:#25D366;font-size:0.8rem;text-decoration:none;background:rgba(37,211,102,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(37,211,102,0.2);">
           <i class="fab fa-whatsapp"></i> WhatsApp
         </a>
         <a href="tel:${escapeHtml(item.phone)}" style="color:var(--orange-light);font-size:0.8rem;text-decoration:none;background:rgba(247,123,0,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(247,123,0,0.2);">
-=======
-        <a href="https://wa.me/${item.phone.replace(/[^0-9]/g,'')}" target="_blank" style="color:#25D366;font-size:0.8rem;text-decoration:none;background:rgba(37,211,102,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(37,211,102,0.3);">
-          <i class="fab fa-whatsapp"></i> WhatsApp
-        </a>
-        <a href="tel:${item.phone}" style="color:var(--orange-light);font-size:0.8rem;text-decoration:none;background:rgba(247,123,0,0.1);padding:6px 12px;border-radius:6px;border:1px solid rgba(247,123,0,0.3);">
->>>>>>> cf6ebfb438737811e75c5b8b522308159233894d
           <i class="fas fa-phone"></i> Call
         </a>
       </div>
@@ -891,7 +763,6 @@ function loadAdminTrials() {
   }).join('');
 }
 
-<<<<<<< HEAD
 function switchAdminTab(tab, element) {
   // Defensive: accept either the clicked button element or the event object.
   // The inline handlers used to pass `event` (an Event instance, which has no
@@ -903,26 +774,13 @@ function switchAdminTab(tab, element) {
   document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
 
   if (btn) btn.classList.add('active');
-  document.getElementById('admin-' + tab).style.display = 'block';
-
-=======
-function switchAdminTab(tab, evt) {
-  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
-  
-  if (evt && evt.target) {
-    evt.target.classList.add('active');
-  }
-  
   const section = document.getElementById('admin-' + tab);
   if (section) section.style.display = 'block';
-  
->>>>>>> cf6ebfb438737811e75c5b8b522308159233894d
+
   if (tab === 'gallery') loadAdminPhotos();
 }
 
 /* ===== PHOTO UPLOAD ===== */
-<<<<<<< HEAD
 /* Upload hardening (client-side; the browser is the only "server"):
    - Never trust file.name or file.type: verify magic bytes.
    - Reject non-raster images (SVG can carry script).
@@ -940,16 +798,6 @@ function readMagicBytes(file) {
 
 function readFileAsDataURL(file) {
   return new Promise(function (resolve, reject) {
-=======
-function uploadPhotos(e) {
-  const files = Array.from(e.target.files);
-  const photos = getData(STORAGE.photos);
-  
-  if (files.length === 0) return;
-  
-  let processed = 0;
-  files.forEach(file => {
->>>>>>> cf6ebfb438737811e75c5b8b522308159233894d
     const reader = new FileReader();
     reader.onload = function () { resolve(reader.result); };
     reader.onerror = function () { reject(reader.error || new Error('Read failed')); };
@@ -1012,7 +860,8 @@ async function uploadPhotos(e) {
 function loadAdminPhotos() {
   const photos = getData(STORAGE.photos);
   const grid = document.getElementById('admin-photos');
-<<<<<<< HEAD
+  if (!grid) return;
+
   // Rebuild exclusively with DOM APIs — no innerHTML with dynamic data.
   grid.textContent = '';
 
@@ -1029,12 +878,6 @@ function loadAdminPhotos() {
       ? 'No displayable photos (invalid or corrupted entries were skipped).'
       : 'No photos uploaded yet.';
     grid.appendChild(p);
-=======
-  if (!grid) return;
-  
-  if (photos.length === 0) {
-    grid.innerHTML = '<p style="color:var(--gray-mid);font-size:0.875rem;">No photos uploaded yet.</p>';
->>>>>>> cf6ebfb438737811e75c5b8b522308159233894d
     return;
   }
 
@@ -1183,12 +1026,9 @@ if (newsletterBtn) {
   newsletterBtn.addEventListener('click', (e) => {
     e.preventDefault();
     const input = document.querySelector('.newsletter-form input');
-<<<<<<< HEAD
+    if (!input) return;
     const email = clampText(input.value, 254);
     if (isValidEmail(email)) {
-=======
-    if (input && input.value && input.value.includes('@')) {
->>>>>>> cf6ebfb438737811e75c5b8b522308159233894d
       showToast('🎉 Subscribed! Check your inbox for exclusive offers.');
       input.value = '';
     } else {
@@ -1239,8 +1079,4 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log('%cIRONFORGE GYM', 'color:#F77B00;font-size:2em;font-weight:bold;font-family:monospace');
-<<<<<<< HEAD
 console.log('%cInfo: form submissions and the admin dashboard are stored locally in THIS browser only (static site, no backend).', 'color:#848E95');
-=======
-console.log('%cAdmin Panel: Click "Admin" link in footer | Password: ironforge2024', 'color:#848E95');
->>>>>>> cf6ebfb438737811e75c5b8b522308159233894d
