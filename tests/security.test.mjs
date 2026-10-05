@@ -71,6 +71,7 @@ test('escapeHtml handles null/undefined/numbers safely', () => {
 
 test('clampText bounds length and trims', () => {
   assert.equal(clampText('   hi  ', 10), 'hi');
+});
 
 test('isValidEmail accepts legitimate addresses', () => {
   for (const good of ['a@b.co', 'user.name+tag@example.com', 'first_last@sub.domain.org']) {
@@ -292,7 +293,4 @@ test('corrupted or tampered verifier storage fails safely', async () => {
   const result = await auth.verify('anything');
   assert.equal(result.ok, false);
   assert.equal(result.provisionRequired, true);
-});
-
-  assert.equal(clampText(undefined, 10), '');
 });

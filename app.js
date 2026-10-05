@@ -1353,21 +1353,6 @@ document.querySelectorAll('.btn-primary').forEach(btn => {
 /* ===== INITIAL LOAD ===== */
 window.addEventListener('DOMContentLoaded', () => {
   revealOnScroll();
-  // Add active-link style
-  const style = document.createElement('style');
-  style.textContent = `.nav-links a.active-link { color: var(--orange) !important; }
-  .nav-links a.active-link::after { transform: scaleX(1) !important; }`;
-  document.head.appendChild(style);
-  
-  // Hamburger animation styles
-  const hamStyle = document.createElement('style');
-  hamStyle.textContent = `
-    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-    .hamburger.active span:nth-child(2) { opacity: 0; }
-    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
-  `;
-  document.head.appendChild(hamStyle);
 });
 
-console.log('%cIRONFORGE GYM', 'color:#F77B00;font-size:2em;font-weight:bold;font-family:monospace');
-console.log('%cInfo: form submissions and the admin dashboard are stored locally in THIS browser only (static site, no backend).', 'color:#848E95');
+

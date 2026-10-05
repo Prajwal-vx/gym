@@ -191,6 +191,11 @@ body:has(button:hover) .cursor-ring {
 }
 .nav-links a:hover { color: var(--white); }
 .nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
+.nav-links a.active-link { color: var(--orange) !important; }
+.nav-links a.active-link::after { transform: scaleX(1) !important; }
+.hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 .nav-btn {
   background: var(--orange) !important;
   color: var(--white) !important;
