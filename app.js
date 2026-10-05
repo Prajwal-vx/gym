@@ -10,7 +10,309 @@ const STORAGE = {
   trials: 'ig_trials',
   messages: 'ig_messages',
   photos: 'ig_photos',
+  members: 'ig_members',
+  memberSession: 'ig_member_session',
 };
+
+function formatCurrency(amount) {
+  const num = Number(amount) || 0;
+  return '₹' + num.toLocaleString('en-IN');
+}
+
+function addDays(dateValue, days) {
+  const date = new Date(dateValue);
+  date.setDate(date.getDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+function ensureMemberSeedData() {
+  const members = getData(STORAGE.members);
+  if (members.length > 0) return members;
+
+  const now = new Date();
+  const sample = {
+    id: Date.now(),
+    name: 'Aarav Sharma',
+    email: 'member@ironforge.in',
+    phone: '+91 98765 43210',
+    plan: 'Elite',
+    password: 'ironforge123',
+    amount: 2999,
+    lastPaymentDate: new Date(now.getTime() - 20 * 86400000).toISOString().slice(0, 10),
+    nextDueDate: addDays(now, 4),
+    createdAt: now.toISOString(),
+    notifications: [
+      { id: Date.now() + 1, type: 'payment', message: createPaymentReminderText('Elite', 2999, addDays(now, 4)), createdAt: now.toISOString() },
+    ],
+  };
+
+  localStorage.setItem(STORAGE.members, JSON.stringify([sample]));
+  return [sample];
+}
+
+function getCurrentMember() {
+  try {
+    const raw = localStorage.getItem(STORAGE.memberSession);
+    if (!raw) return null;
+    const session = JSON.parse(raw);
+    return session && session.id ? session : null;
+  } catch (err) {
+    return null;
+  }
+}
+
+function setCurrentMember(member) {
+  if (!member) {
+    localStorage.removeItem(STORAGE.memberSession);
+    return;
+  }
+  localStorage.setItem(STORAGE.memberSession, JSON.stringify(member));
+}
+
+function getMemberStatus(member) {
+  const dueDate = member && member.nextDueDate ? member.nextDueDate : null;
+  return getMembershipStatus(dueDate);
+}
+
+function getMemberByCredentials(email, phone, password) {
+  const memberEmail = String(email || '').trim().toLowerCase();
+  const memberPhone = String(phone || '').trim();
+  const memberPassword = String(password || '').trim();
+  const members = getData(STORAGE.members);
+  return members.find(member => {
+    const matchesEmail = member.email && member.email.toLowerCase() === memberEmail;
+    const matchesPhone = member.phone && member.phone.replace(/[^0-9]/g, '') === memberPhone.replace(/[^0-9]/g, '');
+    const matchesPassword = member.password === memberPassword;
+    return (matchesEmail || matchesPhone) && matchesPassword;
+  }) || null;
+}
+
+function saveMemberRecord(member) {
+  const members = getData(STORAGE.members);
+  const idx = members.findIndex(item => item.id === member.id);
+  if (idx >= 0) {
+    members[idx] = member;
+  } else {
+    members.unshift(member);
+  }
+  localStorage.setItem(STORAGE.members, JSON.stringify(members));
+  return member;
+}
+
+function renderMemberNotifications(member) {
+  const list = document.getElementById('member-notifications');
+  if (!list) return;
+  const notifications = Array.isArray(member.notifications) ? member.notifications : [];
+  if (!notifications.length) {
+    list.innerHTML = '<div class="member-empty">No payment reminders yet.</div>';
+    return;
+  }
+  list.innerHTML = notifications.slice(0, 5).map(item => `
+    <div class="member-notice">
+      <span class="notice-pill ${item.type === 'payment' ? 'payment' : 'info'}">${item.type === 'payment' ? 'Payment' : 'Info'}</span>
+      <p>${escapeHtml(item.message || 'Membership update')}</p>
+      <small>${new Date(item.createdAt || Date.now()).toLocaleDateString()}</small>
+    </div>
+  `).join('');
+}
+
+function renderMemberDashboard() {
+  const member = getCurrentMember();
+  const panel = document.getElementById('memberDashboard');
+  if (!panel) return;
+  if (!member) {
+    panel.style.display = 'none';
+    return;
+  }
+  const status = getMemberStatus(member);
+  const summaryStatus = document.getElementById('member-status');
+  const nameEl = document.getElementById('member-name');
+  const planEl = document.getElementById('member-plan');
+  const dueEl = document.getElementById('member-next-due');
+  const amountEl = document.getElementById('member-amount');
+  const balanceEl = document.getElementById('member-balance');
+  if (summaryStatus) {
+    summaryStatus.textContent = status.label;
+    summaryStatus.className = 'member-badge ' + status.state;
+  }
+  if (nameEl) nameEl.textContent = member.name;
+  if (planEl) planEl.textContent = member.plan;
+  if (dueEl) dueEl.textContent = member.nextDueDate;
+  if (amountEl) amountEl.textContent = formatCurrency(member.amount);
+  if (balanceEl) balanceEl.textContent = status.state === 'overdue' ? 'Needs attention. Please settle the outstanding payment.' : status.message;
+  renderMemberNotifications(member);
+  panel.style.display = 'block';
+}
+
+function refreshAdminMemberList() {
+  const members = getData(STORAGE.members);
+  const list = document.getElementById('admin-members-list');
+  if (!list) return;
+  if (!members.length) {
+    list.innerHTML = '<div class="member-empty">No members yet.</div>';
+    return;
+  }
+
+  list.innerHTML = members.map(member => {
+    const status = getMemberStatus(member);
+    return `
+      <div class="member-admin-row">
+        <div class="member-admin-main">
+          <h4>${escapeHtml(member.name)}</h4>
+          <p>${escapeHtml(member.email)} • ${escapeHtml(member.plan)}</p>
+          <small class="member-status-badge ${status.state}">${status.label}</small>
+        </div>
+        <div class="member-meta">
+          <span>Due: ${escapeHtml(member.nextDueDate || 'No date')}</span>
+          <span>Amount: ${formatCurrency(member.amount)}</span>
+          <span>Phone: ${escapeHtml(member.phone || 'N/A')}</span>
+        </div>
+        <div class="member-admin-actions">
+          <button type="button" data-member-action="remind" data-member-id="${member.id}">Send reminder</button>
+          <button type="button" data-member-action="pay" data-member-id="${member.id}">Mark paid</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function refreshAdminMemberStats() {
+  const members = getData(STORAGE.members);
+  const totalEl = document.getElementById('total-members');
+  const dueSoonEl = document.getElementById('due-soon-members');
+  const overdueEl = document.getElementById('overdue-members');
+  if (totalEl) totalEl.textContent = String(members.length);
+  if (dueSoonEl) dueSoonEl.textContent = String(members.filter(m => getMemberStatus(m).state === 'dueSoon').length);
+  if (overdueEl) overdueEl.textContent = String(members.filter(m => getMemberStatus(m).state === 'overdue').length);
+}
+
+function refreshAllMemberData() {
+  renderMemberDashboard();
+  refreshAdminMemberList();
+  refreshAdminMemberStats();
+}
+
+function openMemberLoginModal() {
+  const modal = document.getElementById('authModal');
+  if (modal) {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function toggleMemberAuth(mode) {
+  const loginPanel = document.getElementById('member-login-panel');
+  const registerPanel = document.getElementById('member-register-panel');
+  if (loginPanel) loginPanel.style.display = mode === 'login' ? 'block' : 'none';
+  if (registerPanel) registerPanel.style.display = mode === 'register' ? 'block' : 'none';
+}
+
+function handleMemberLogin(event) {
+  event.preventDefault();
+  const email = document.getElementById('member-email')?.value || '';
+  const phone = document.getElementById('member-phone')?.value || '';
+  const password = document.getElementById('member-password')?.value || '';
+  const member = getMemberByCredentials(email, phone, password);
+  if (!member) {
+    showToast('❌ Invalid member login. Try the demo account or sign up.');
+    return;
+  }
+  setCurrentMember(member);
+  closeModal('authModal');
+  renderMemberDashboard();
+  showToast('✅ Welcome back, ' + member.name + '!');
+}
+
+function handleMemberRegister(event) {
+  event.preventDefault();
+  const name = document.getElementById('new-member-name')?.value || '';
+  const email = document.getElementById('new-member-email')?.value || '';
+  const phone = document.getElementById('new-member-phone')?.value || '';
+  const plan = document.getElementById('new-member-plan')?.value || 'Starter';
+  const password = document.getElementById('new-member-password')?.value || '';
+  if (!name || !email || !phone || !password) {
+    showToast('⚠️ Please enter full member details.');
+    return;
+  }
+
+  const members = getData(STORAGE.members);
+  const exists = members.find(member => member.email.toLowerCase() === email.toLowerCase() || member.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, ''));
+  if (exists) {
+    showToast('⚠️ This member already exists. Please log in instead.');
+    toggleMemberAuth('login');
+    return;
+  }
+
+  const amount = plan === 'Elite' ? 2999 : plan === 'Champion' ? 4999 : 1499;
+  const member = {
+    id: Date.now(),
+    name,
+    email: email.trim(),
+    phone: phone.trim(),
+    plan,
+    password: password.trim(),
+    amount,
+    lastPaymentDate: new Date().toISOString().slice(0, 10),
+    nextDueDate: addDays(new Date(), 30),
+    createdAt: new Date().toISOString(),
+    notifications: [{ id: Date.now(), type: 'info', message: 'Welcome to IRONFORGE! Your membership is active and your profile is ready.', createdAt: new Date().toISOString() }],
+  };
+
+  saveMemberRecord(member);
+  setCurrentMember(member);
+  document.getElementById('member-register-form')?.reset();
+  closeModal('authModal');
+  renderMemberDashboard();
+  showToast('✅ Membership created successfully.');
+}
+
+function sendMemberReminder(memberId) {
+  const members = getData(STORAGE.members);
+  const member = members.find(item => item.id === Number(memberId));
+  if (!member) return;
+  const message = createPaymentReminderText(member.plan, member.amount, member.nextDueDate);
+  member.notifications = [{ id: Date.now(), type: 'payment', message, createdAt: new Date().toISOString() }, ...(member.notifications || [])].slice(0, 6);
+  localStorage.setItem(STORAGE.members, JSON.stringify(members));
+  renderMemberDashboard();
+  refreshAdminMemberList();
+  showToast('📣 Reminder sent to ' + member.name + '.');
+}
+
+function markMemberPaid(memberId) {
+  const members = getData(STORAGE.members);
+  const member = members.find(item => item.id === Number(memberId));
+  if (!member) return;
+  const today = new Date().toISOString().slice(0, 10);
+  member.lastPaymentDate = today;
+  member.nextDueDate = addDays(today, 30);
+  member.notifications = [{ id: Date.now(), type: 'info', message: 'Payment received. Your membership is active until ' + member.nextDueDate + '.', createdAt: new Date().toISOString() }, ...(member.notifications || [])].slice(0, 6);
+  localStorage.setItem(STORAGE.members, JSON.stringify(members));
+  renderMemberDashboard();
+  refreshAdminMemberList();
+  showToast('✅ Payment recorded for ' + member.name + '.');
+}
+
+function handleMemberDashboardAction(event) {
+  const item = event.target.closest('[data-member-action]');
+  if (!item) return;
+  const id = Number(item.dataset.memberId);
+  const action = item.dataset.memberAction;
+  if (action === 'remind') sendMemberReminder(id);
+  if (action === 'pay') markMemberPaid(id);
+}
+
+function logoutMember() {
+  setCurrentMember(null);
+  renderMemberDashboard();
+  showToast('👋 Member session ended.');
+}
+
+window.addEventListener('load', () => {
+  ensureMemberSeedData();
+  refreshAllMemberData();
+  toggleMemberAuth('login');
+  setInterval(refreshAllMemberData, 15000);
+});
 
 /* ===== LOADER ===== */
 window.addEventListener('load', () => {
@@ -125,14 +427,12 @@ function drawLines() {
   }
 }
 
-let particleAnimationId = null;
-
 function animateParticles() {
   if (!ctx || !canvas) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   particles.forEach(p => { p.update(); p.draw(); });
   drawLines();
-  particleAnimationId = requestAnimationFrame(animateParticles);
+  requestAnimationFrame(animateParticles);
 }
 if (canvas && ctx) {
   animateParticles();
@@ -168,6 +468,12 @@ window.addEventListener('scroll', () => {
 
   // Counter
   triggerCounters();
+
+  const bgText = document.querySelector('.hero-bg-text');
+  if (bgText) {
+    bgText.style.transform = `translate(-50%, calc(-50% + ${scrollY * 0.3}px))`;
+    bgText.style.opacity = Math.max(0, 1 - scrollY / 500);
+  }
 });
 
 /* ===== MOBILE MENU ===== */
@@ -476,18 +782,6 @@ function contactHandoffFromForm() {
   ]);
 }
 
-/* Escape user-supplied values before injecting them with innerHTML.
-   Without this, a visitor could submit e.g. "<img src=x onerror=...>"
-   as their name and execute script inside the admin dashboard (stored XSS). */
-function escapeHtml(value) {
-  return String(value == null ? '' : value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
 function clearData(type) {
   if (confirm('Are you sure you want to clear all ' + type + '?')) {
     localStorage.removeItem(STORAGE[type]);
@@ -497,6 +791,13 @@ function clearData(type) {
     showToast('Data cleared successfully.');
   }
 }
+
+document.addEventListener('click', (event) => {
+  const actionButton = event.target.closest('[data-member-action]');
+  if (actionButton) {
+    handleMemberDashboardAction({ target: actionButton });
+  }
+});
 
 /* ===== ADMIN PANEL ===== */
 /* SECURITY MODEL (important): this site has no backend, so the admin
@@ -952,16 +1253,6 @@ function showToast(msg) {
     setTimeout(() => toast.classList.remove('show'), 4000);
   }
 }
-
-/* ===== PARALLAX HERO BG TEXT ===== */
-window.addEventListener('scroll', () => {
-  const bgText = document.querySelector('.hero-bg-text');
-  if (bgText) {
-    const scrollY = window.scrollY;
-    bgText.style.transform = `translate(-50%, calc(-50% + ${scrollY * 0.3}px))`;
-    bgText.style.opacity = Math.max(0, 1 - scrollY / 500);
-  }
-});
 
 /* ===== TILT EFFECT ON CARDS ===== */
 document.querySelectorAll('.program-card, .trainer-card, .feature-card').forEach(card => {

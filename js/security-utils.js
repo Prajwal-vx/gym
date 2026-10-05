@@ -131,6 +131,33 @@
     return diff === 0;
   }
 
+  function getMembershipStatus(nextDueDate) {
+    var due = nextDueDate == null || nextDueDate === '' ? null : new Date(nextDueDate);
+    if (!(due instanceof Date) || Number.isNaN(due.getTime())) {
+      return { state: 'inactive', label: 'Unknown', daysLeft: 0, message: 'Membership status unavailable.' };
+    }
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    due.setHours(0, 0, 0, 0);
+    var diffDays = Math.round((due.getTime() - today.getTime()) / 86400000);
+
+    if (diffDays < 0) {
+      return { state: 'overdue', label: 'Overdue', daysLeft: diffDays, message: 'Payment is overdue.' };
+    }
+    if (diffDays <= 7) {
+      return { state: 'dueSoon', label: 'Due soon', daysLeft: diffDays, message: 'Payment is due soon.' };
+    }
+    return { state: 'active', label: 'Active', daysLeft: diffDays, message: 'Membership is active.' };
+  }
+
+  function createPaymentReminderText(planName, amount, dueDate) {
+    var plan = String(planName || 'Membership');
+    var value = Number(amount);
+    var amtText = Number.isFinite(value) ? '₹' + value.toLocaleString('en-IN') : 'your membership fee';
+    var dateText = dueDate ? String(dueDate) : 'your next due date';
+    return 'Reminder: your ' + plan + ' membership payment of ' + amtText + ' is due on ' + dateText + '. Please pay before the due date.';
+  }
+
   function validatePasscodeFormat(passcode) {
     var p = String(passcode == null ? '' : passcode);
     if (p.length < MIN_PASSCODE) return 'Passcode must be at least ' + MIN_PASSCODE + ' characters.';
@@ -305,6 +332,8 @@
     isValidImageDataUrl: isValidImageDataUrl,
     sniffImageType: sniffImageType,
     timingSafeEqual: timingSafeEqual,
+    getMembershipStatus: getMembershipStatus,
+    createPaymentReminderText: createPaymentReminderText,
     hasWebCrypto: hasWebCrypto,
     createAdminAuth: createAdminAuth
   };

@@ -47,6 +47,7 @@
       <li><a href="#gallery">Gallery</a></li>
       <li><a href="#membership">Membership</a></li>
       <li><a href="#contact">Contact</a></li>
+      <li><a href="#" class="nav-btn secondary" onclick="openMemberLoginModal(); return false;">Member Login</a></li>
       <li><a href="#" class="nav-btn" onclick="openTrialModal(); return false;">Free Trial</a></li>
     </ul>
     <div class="hamburger" id="hamburger" onclick="toggleMenu()">
@@ -706,8 +707,8 @@
             <button><i class="fas fa-arrow-right"></i></button>
           </div>
           <div class="footer-app-btns">
-            <button class="app-btn"><i class="fab fa-apple"></i> App Store</button>
-            <button class="app-btn"><i class="fab fa-google-play"></i> Play Store</button>
+            <button class="app-btn" type="button" onclick="openMemberLoginModal()"><i class="fas fa-user"></i> Member Login</button>
+            <button class="app-btn" type="button" onclick="openAdminPanel()"><i class="fas fa-user-shield"></i> Admin Portal</button>
           </div>
         </div>
       </div>
@@ -716,7 +717,7 @@
   <div class="footer-bottom">
     <div class="container">
       <p>© 2024 IRONFORGE GYM. All rights reserved.</p>
-      <p><a href="#" onclick="openAdminPanel(); return false;">Admin</a> | Privacy Policy | Terms of Service</p>
+      <p><a href="#" onclick="openAdminPanel(); return false;">Admin</a> | <a href="#" onclick="openMemberLoginModal(); return false;">Member Login</a> | Privacy Policy | Terms of Service</p>
     </div>
   </div>
 </footer>
@@ -807,6 +808,123 @@
   </div>
 </div>
 
+<!-- ========== MEMBER AUTH MODAL ========== -->
+<div id="authModal" class="modal-overlay" onclick="closeModal('authModal')">
+  <div class="modal auth-modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('authModal')"><i class="fas fa-times"></i></button>
+    <div class="modal-header">
+      <div class="modal-icon"><i class="fas fa-user-circle"></i></div>
+      <h2>Member Login</h2>
+      <p>Track your membership, upcoming payments, and reminders in one place.</p>
+    </div>
+
+    <div class="member-auth-tabs">
+      <button class="member-auth-tab active" type="button" onclick="toggleMemberAuth('login')">Login</button>
+      <button class="member-auth-tab" type="button" onclick="toggleMemberAuth('register')">Create Account</button>
+    </div>
+
+    <div id="member-login-panel" class="member-auth-panel">
+      <form class="modal-form" onsubmit="handleMemberLogin(event)">
+        <div class="form-group">
+          <input type="email" id="member-email" placeholder="Email address" required />
+          <label>Email</label>
+        </div>
+        <div class="form-group">
+          <input type="tel" id="member-phone" placeholder="Phone number" required />
+          <label>Phone</label>
+        </div>
+        <div class="form-group">
+          <input type="password" id="member-password" placeholder="Password" required />
+          <label>Password</label>
+        </div>
+        <button type="submit" class="btn-primary full-width"><i class="fas fa-sign-in-alt"></i> Login to Member Portal</button>
+      </form>
+      <div class="member-demo-box">
+        <strong>Demo account:</strong>
+        <span>Email: member@ironforge.in</span>
+        <span>Password: ironforge123</span>
+      </div>
+    </div>
+
+    <div id="member-register-panel" class="member-auth-panel" style="display:none;">
+      <form id="member-register-form" class="modal-form" onsubmit="handleMemberRegister(event)">
+        <div class="form-group">
+          <input type="text" id="new-member-name" placeholder="Full name" required />
+          <label>Name</label>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <input type="email" id="new-member-email" placeholder="Email" required />
+            <label>Email</label>
+          </div>
+          <div class="form-group">
+            <input type="tel" id="new-member-phone" placeholder="Phone" required />
+            <label>Phone</label>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <select id="new-member-plan">
+              <option value="Starter">Starter</option>
+              <option value="Elite" selected>Elite</option>
+              <option value="Champion">Champion</option>
+            </select>
+            <label>Membership Plan</label>
+          </div>
+          <div class="form-group">
+            <input type="password" id="new-member-password" placeholder="Create password" required />
+            <label>Password</label>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary full-width"><i class="fas fa-user-plus"></i> Create Member Account</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="memberDashboard" class="member-dashboard-shell" style="display:none;">
+  <div class="container member-dashboard-wrap">
+    <div class="member-dashboard-header">
+      <div>
+        <div class="section-tag">Member Portal</div>
+        <h2>Welcome back, <span id="member-name">Member</span></h2>
+      </div>
+      <button type="button" class="btn-secondary" onclick="logoutMember()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+
+    <div class="member-summary-grid">
+      <div class="member-summary-card">
+        <span class="member-card-label">Plan</span>
+        <strong id="member-plan">Elite</strong>
+      </div>
+      <div class="member-summary-card">
+        <span class="member-card-label">Membership Status</span>
+        <strong id="member-status" class="member-badge active">Active</strong>
+      </div>
+      <div class="member-summary-card">
+        <span class="member-card-label">Next Payment</span>
+        <strong id="member-next-due">—</strong>
+      </div>
+      <div class="member-summary-card">
+        <span class="member-card-label">Amount Due</span>
+        <strong id="member-amount">₹0</strong>
+      </div>
+    </div>
+
+    <div class="member-content-grid">
+      <div class="member-panel">
+        <h3>Payment Overview</h3>
+        <p id="member-balance">Your membership is active.</p>
+        <button type="button" class="btn-primary full-width" onclick="markMemberPaid(getCurrentMember()?.id)"><i class="fas fa-wallet"></i> Mark as paid</button>
+      </div>
+      <div class="member-panel">
+        <h3>Notifications</h3>
+        <div id="member-notifications" class="member-notifications"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ========== ADMIN PANEL ========== -->
 <!-- This is a LOCAL dashboard (no backend): it only shows this browser's
      stored records. The passcode is client-side UI gating (PBKDF2-hashed,
@@ -840,6 +958,7 @@
         <div class="admin-tabs">
           <button class="admin-tab active" onclick="switchAdminTab('inquiries', this)">Inquiries</button>
           <button class="admin-tab" onclick="switchAdminTab('trials', this)">Trial Bookings</button>
+          <button class="admin-tab" onclick="switchAdminTab('members', this)">Members</button>
           <button class="admin-tab" onclick="switchAdminTab('gallery', this)">Add Photos</button>
         </div>
         <div class="admin-actions">
@@ -861,6 +980,15 @@
         <h3>Trial Class Bookings</h3>
         <div id="trials-list" class="inquiries-list"></div>
         <button class="btn-danger" onclick="clearData('trials')"><i class="fas fa-trash"></i> Clear All</button>
+      </div>
+      <div id="admin-members" class="admin-section" style="display:none;">
+        <div class="admin-stats-row">
+          <div class="admin-stat"><i class="fas fa-user-friends"></i><div><span id="total-members">0</span><p>Members</p></div></div>
+          <div class="admin-stat"><i class="fas fa-clock"></i><div><span id="due-soon-members">0</span><p>Due Soon</p></div></div>
+          <div class="admin-stat"><i class="fas fa-exclamation-triangle"></i><div><span id="overdue-members">0</span><p>Overdue</p></div></div>
+        </div>
+        <h3>Membership Tracking</h3>
+        <div id="admin-members-list" class="inquiries-list"></div>
       </div>
       <div id="admin-gallery" class="admin-section" style="display:none;">
         <h3>Add Gym Photos</h3>

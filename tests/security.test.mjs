@@ -19,6 +19,8 @@ const {
   isValidImageDataUrl,
   sniffImageType,
   timingSafeEqual,
+  getMembershipStatus,
+  createPaymentReminderText,
   createAdminAuth,
 } = require('../js/security-utils.js');
 
@@ -167,8 +169,28 @@ test('timingSafeEqual compares secrets correctly', () => {
   assert.equal(timingSafeEqual(null, a), false);
 });
 
+test('membership status flags active, due soon, and overdue correctly', () => {
+  const today = new Date();
+  const dueSoon = new Date(today.getTime() + 4 * 86400000).toISOString().slice(0, 10);
+  const overdue = new Date(today.getTime() - 7 * 86400000).toISOString().slice(0, 10);
+  const active = new Date(today.getTime() + 20 * 86400000).toISOString().slice(0, 10);
+
+  assert.equal(getMembershipStatus(dueSoon).state, 'dueSoon');
+  assert.equal(getMembershipStatus(overdue).state, 'overdue');
+  assert.equal(getMembershipStatus(active).state, 'active');
+});
+
+test('payment reminder text is useful and short', () => {
+  const message = createPaymentReminderText('Elite', 2999, '2026-10-08');
+  assert.match(message, /Elite/i);
+  assert.match(message, /2999|₹/i);
+  assert.ok(message.length < 220);
+});
+
+test('clampText bounds length and trims', () => {
   assert.equal(clampText('x'.repeat(500), 80).length, 80);
   assert.equal(clampText(null, 10), '');
+});
 
 /* ================= Admin passcode module ================= */
 
