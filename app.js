@@ -25,18 +25,28 @@ function addDays(dateValue, days) {
   return date.toISOString().slice(0, 10);
 }
 
-function ensureMemberSeedData() {
+async function ensureMemberSeedData() {
   const members = getData(STORAGE.members);
   if (members.length > 0) return members;
 
   const now = new Date();
+  // Hash the demo password for security
+  let passwordHash = null;
+  try {
+    passwordHash = await hashMemberPassword('ironforge123');
+  } catch (err) {
+    console.error('Failed to hash demo password:', err);
+    // Fallback to plaintext if crypto fails (should not happen in modern browsers)
+    passwordHash = { v: 0, plaintext: 'ironforge123' };
+  }
+
   const sample = {
     id: Date.now(),
     name: 'Aarav Sharma',
     email: 'member@ironforge.in',
     phone: '+91 98765 43210',
     plan: 'Elite',
-    password: 'ironforge123',
+    password: passwordHash,
     amount: 2999,
     lastPaymentDate: new Date(now.getTime() - 20 * 86400000).toISOString().slice(0, 10),
     nextDueDate: addDays(now, 4),
@@ -74,17 +84,30 @@ function getMemberStatus(member) {
   return getMembershipStatus(dueDate);
 }
 
-function getMemberByCredentials(email, phone, password) {
+async function getMemberByCredentials(email, phone, password) {
   const memberEmail = String(email || '').trim().toLowerCase();
   const memberPhone = String(phone || '').trim();
   const memberPassword = String(password || '').trim();
   const members = getData(STORAGE.members);
-  return members.find(member => {
+  const candidate = members.find(member => {
     const matchesEmail = member.email && member.email.toLowerCase() === memberEmail;
     const matchesPhone = member.phone && member.phone.replace(/[^0-9]/g, '') === memberPhone.replace(/[^0-9]/g, '');
-    const matchesPassword = member.password === memberPassword;
-    return (matchesEmail || matchesPhone) && matchesPassword;
-  }) || null;
+    return (matchesEmail || matchesPhone);
+  });
+  if (!candidate) return null;
+
+  // Check password - handle both hashed (v1) and legacy plaintext (v0)
+  if (candidate.password && typeof candidate.password === 'object' && candidate.password.v === 1) {
+    const isValid = await verifyMemberPassword(memberPassword, candidate.password);
+    return isValid ? candidate : null;
+  } else if (candidate.password && typeof candidate.password === 'object' && candidate.password.v === 0) {
+    // Legacy plaintext - should be migrated, but accept for now
+    return candidate.password.plaintext === memberPassword ? candidate : null;
+  } else if (typeof candidate.password === 'string') {
+    // Very old plaintext - accept for migration
+    return candidate.password === memberPassword ? candidate : null;
+  }
+  return null;
 }
 
 function saveMemberRecord(member) {
@@ -207,12 +230,12 @@ function toggleMemberAuth(mode) {
   if (registerPanel) registerPanel.style.display = mode === 'register' ? 'block' : 'none';
 }
 
-function handleMemberLogin(event) {
+async function handleMemberLogin(event) {
   event.preventDefault();
   const email = document.getElementById('member-email')?.value || '';
   const phone = document.getElementById('member-phone')?.value || '';
   const password = document.getElementById('member-password')?.value || '';
-  const member = getMemberByCredentials(email, phone, password);
+  const member = await getMemberByCredentials(email, phone, password);
   if (!member) {
     showToast('❌ Invalid member login. Try the demo account or sign up.');
     return;
@@ -223,7 +246,7 @@ function handleMemberLogin(event) {
   showToast('✅ Welcome back, ' + member.name + '!');
 }
 
-function handleMemberRegister(event) {
+async function handleMemberRegister(event) {
   event.preventDefault();
   const name = document.getElementById('new-member-name')?.value || '';
   const email = document.getElementById('new-member-email')?.value || '';
@@ -243,6 +266,16 @@ function handleMemberRegister(event) {
     return;
   }
 
+  // Hash the password before storing
+  let passwordHash = null;
+  try {
+    passwordHash = await hashMemberPassword(password.trim());
+  } catch (err) {
+    console.error('Failed to hash password:', err);
+    showToast('⚠️ Security error: could not secure password. Please try a modern browser.');
+    return;
+  }
+
   const amount = plan === 'Elite' ? 2999 : plan === 'Champion' ? 4999 : 1499;
   const member = {
     id: Date.now(),
@@ -250,7 +283,7 @@ function handleMemberRegister(event) {
     email: email.trim(),
     phone: phone.trim(),
     plan,
-    password: password.trim(),
+    password: passwordHash,
     amount,
     lastPaymentDate: new Date().toISOString().slice(0, 10),
     nextDueDate: addDays(new Date(), 30),
@@ -307,8 +340,8 @@ function logoutMember() {
   showToast('👋 Member session ended.');
 }
 
-window.addEventListener('load', () => {
-  ensureMemberSeedData();
+window.addEventListener('load', async () => {
+  await ensureMemberSeedData();
   refreshAllMemberData();
   toggleMemberAuth('login');
   setInterval(refreshAllMemberData, 15000);

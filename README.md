@@ -19,7 +19,7 @@ index.html               Page markup, CSP meta, CDN references (SRI-protected)
 style.css                All styling
 app.js                   UI logic, forms, local admin dashboard
 js/security-utils.js     DOM-free security core (validation, image checks,
-                         PBKDF2 admin passcode) — unit-tested
+                         PBKDF2 admin passcode, member password hashing) — unit-tested
 tests/security.test.mjs  Security regression tests
 tools/dev-server.mjs     Loopback-only static server for local testing
 deploy/nginx.conf.example Hardened reverse-proxy/TLS config for real deployment

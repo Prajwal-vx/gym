@@ -158,6 +158,63 @@
     return 'Reminder: your ' + plan + ' membership payment of ' + amtText + ' is due on ' + dateText + '. Please pay before the due date.';
   }
 
+  /* ---------- Member Password Hashing ---------- */
+  /* Hash member passwords using PBKDF2-SHA256 (same as admin passcode).
+     This is client-side only - for production, passwords should be hashed
+     server-side with bcrypt/argon2. This is a mitigation for the static
+     site architecture. */
+  var MEMBER_PBKDF2_ITERATIONS = 260000; // OWASP recommendation
+
+  function hashMemberPassword(password) {
+    if (!hasWebCrypto()) {
+      return Promise.reject(new Error('Secure crypto unavailable. Use HTTPS/modern browser.'));
+    }
+    var p = String(password == null ? '' : password);
+    if (p.length < 1) return Promise.reject(new Error('Password cannot be empty'));
+    var salt = new Uint8Array(16);
+    root.crypto.getRandomValues(salt);
+    var enc = new root.TextEncoder();
+    return root.crypto.subtle
+      .importKey('raw', enc.encode(p), 'PBKDF2', false, ['deriveBits'])
+      .then(function (key) {
+        return root.crypto.subtle.deriveBits(
+          { name: 'PBKDF2', hash: 'SHA-256', salt: salt, iterations: MEMBER_PBKDF2_ITERATIONS },
+          key, 256
+        );
+      })
+      .then(function (bits) {
+        return {
+          v: 1,
+          alg: 'PBKDF2-SHA256',
+          iterations: MEMBER_PBKDF2_ITERATIONS,
+          saltB64: bytesToB64(salt),
+          hashB64: bytesToB64(new Uint8Array(bits))
+        };
+      });
+  }
+
+  function verifyMemberPassword(password, storedHash) {
+    if (!hasWebCrypto() || !storedHash || !storedHash.saltB64 || !storedHash.hashB64) {
+      return Promise.resolve(false);
+    }
+    var salt = b64ToBytes(storedHash.saltB64);
+    var expected = b64ToBytes(storedHash.hashB64);
+    var iter = storedHash.iterations || MEMBER_PBKDF2_ITERATIONS;
+    var enc = new root.TextEncoder();
+    return root.crypto.subtle
+      .importKey('raw', enc.encode(String(password || '')), 'PBKDF2', false, ['deriveBits'])
+      .then(function (key) {
+        return root.crypto.subtle.deriveBits(
+          { name: 'PBKDF2', hash: 'SHA-256', salt: salt, iterations: iter },
+          key, 256
+        );
+      })
+      .then(function (bits) {
+        return timingSafeEqual(new Uint8Array(bits), expected);
+      })
+      .catch(function () { return false; });
+  }
+
   function validatePasscodeFormat(passcode) {
     var p = String(passcode == null ? '' : passcode);
     if (p.length < MIN_PASSCODE) return 'Passcode must be at least ' + MIN_PASSCODE + ' characters.';
@@ -335,7 +392,9 @@
     getMembershipStatus: getMembershipStatus,
     createPaymentReminderText: createPaymentReminderText,
     hasWebCrypto: hasWebCrypto,
-    createAdminAuth: createAdminAuth
+    createAdminAuth: createAdminAuth,
+    hashMemberPassword: hashMemberPassword,
+    verifyMemberPassword: verifyMemberPassword
   };
 
   if (typeof module !== 'undefined' && module.exports) {

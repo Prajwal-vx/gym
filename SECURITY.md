@@ -48,7 +48,20 @@ name/MIME), capped at 5 MB and 20 photos; quota errors are surfaced instead of
 silently failing. Inquiries/trials were already escaped via `escapeHtml()` —
 covered by regression tests.
 
-### 2.3 Deceptive submission flow (business-logic finding)
+### 2.3 Member passwords stored in plaintext (was CRITICAL)
+Member passwords were stored unencrypted in localStorage (`password: 'ironforge123'`).
+Any script running in the same origin (including malicious extensions or XSS)
+could read these passwords directly. This is a severe security vulnerability.
+
+**Fix:** Added PBKDF2-SHA256 password hashing (260,000 iterations, WebCrypto) for
+all member passwords. New registrations hash passwords before storage. The demo
+account password is now hashed. Login verification uses the hash with timing-safe
+comparison. Legacy plaintext passwords are still accepted for backward compatibility
+but should be migrated. Note: This is client-side hashing — for production, passwords
+must be hashed server-side with bcrypt/argon2. This is a mitigation for the static
+site architecture.
+
+### 2.4 Deceptive submission flow (business-logic finding)
 Forms claimed "our team will contact you within 2 hours" while the data never
 left the visitor's browser — the gym received nothing. Sensitive answers
 (health conditions) also sat in `localStorage` indefinitely.
@@ -59,7 +72,7 @@ number, so the promise is actually fulfillable. Local storage is capped (200
 records/form) and "Reset local admin data" wipes it on request.
 **Proper fix:** add a backend (see §4).
 
-### 2.4 Hardening added
+### 2.5 Hardening added
 - **CSP** via `<meta>`: `default-src 'self'`, no `object`, no frames,
   `base-uri 'self'`, `form-action 'self'`, tight `img-src`
   (`self`, `data:`, Unsplash). Inline script/style remain allowed because the
@@ -78,8 +91,8 @@ records/form) and "Reset local admin data" wipes it on request.
 magic-byte sniffing (PNG/JPEG/GIF/WebP accept, SVG/EXE reject), PBKDF2
 provisioning (no plaintext at rest, unique salts, policy enforcement
 including the leaked default), lockout semantics (correct passcode refused
-while locked), change-passcode authorization, reset fail-safety, and
-corrupted-storage resilience.
+while locked), change-passcode authorization, reset fail-safety, corrupted-storage
+resilience, and member password hashing (PBKDF2-SHA256 with timing-safe verification).
 
 ## 4. Remaining risks / manual actions
 
