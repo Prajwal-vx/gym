@@ -22,9 +22,14 @@ const HOST = '127.0.0.1'; // loopback only
 const ALLOWED_FILES = new Map([
   ['/', ['index.html', 'text/html; charset=utf-8']],
   ['/index.html', ['index.html', 'text/html; charset=utf-8']],
-  ['/app.js', ['app.js', 'text/javascript; charset=utf-8']],
+  ['/404.html', ['404.html', 'text/html; charset=utf-8']],
+  ['/js/app.js', [join('js', 'app.js'), 'text/javascript; charset=utf-8']],
+  ['/js/config.js', [join('js', 'config.js'), 'text/javascript; charset=utf-8']],
+  ['/js/data-store.js', [join('js', 'data-store.js'), 'text/javascript; charset=utf-8']],
+  ['/js/members.js', [join('js', 'members.js'), 'text/javascript; charset=utf-8']],
   ['/js/security-utils.js', [join('js', 'security-utils.js'), 'text/javascript; charset=utf-8']],
-  ['/style.css', ['style.css', 'text/css; charset=utf-8']],
+  ['/css/site.css', [join('css', 'site.css'), 'text/css; charset=utf-8']],
+  ['/assets/favicon.svg', [join('assets', 'favicon.svg'), 'image/svg+xml']],
 ]);
 
 const SECURITY_HEADERS = {
@@ -43,8 +48,10 @@ const server = createServer(async (req, res) => {
     const requested = decodeURIComponent(url.pathname).replace(/\\/g, '/');
     const entry = ALLOWED_FILES.get(requested);
     if (!entry) {
-      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8', ...SECURITY_HEADERS });
-      res.end('Not found');
+      const [notFoundFile, contentType] = ALLOWED_FILES.get('/404.html');
+      const body = await readFile(join(ROOT, notFoundFile));
+      res.writeHead(404, { 'Content-Type': contentType, 'Content-Length': body.length, ...SECURITY_HEADERS });
+      res.end(body);
       return;
     }
     const [relPath, contentType] = entry;

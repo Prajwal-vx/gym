@@ -5,7 +5,7 @@
   "description": "IRONFORGE GYM static site (vanilla HTML/CSS/JS). No runtime dependencies.",
   "scripts": {
     "test": "node --test tests/security.test.mjs",
-    "check": "node --check js/security-utils.js && node --check app.js",
+    "check": "node --check js/security-utils.js && node --check js/data-store.js && node --check js/members.js && node --check js/app.js",
     "serve": "node tools/dev-server.mjs"
   },
   "engines": {

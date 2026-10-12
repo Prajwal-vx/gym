@@ -15,9 +15,14 @@ Single-page marketing site for a gym. **Pure static**: vanilla HTML/CSS/JS, no b
 ## Layout
 
 ```
-index.html               Page markup, CSP meta, CDN references (SRI-protected)
-style.css                All styling
-app.js                   UI logic, forms, local admin dashboard
+index.html               Single-page markup, metadata, and CSP
+404.html                 Custom not-found page
+css/site.css             Responsive site and component styles
+assets/favicon.svg       Site icon
+js/app.js                Site UI, forms, modals, animation, and dashboard rendering
+js/data-store.js         Browser persistence adapter and bounded record store
+js/config.js             Public contact and WhatsApp settings
+js/members.js            Member account and membership dashboard feature
 js/security-utils.js     DOM-free security core (validation, image checks,
                          PBKDF2 admin passcode, member password hashing) — unit-tested
 tests/security.test.mjs  Security regression tests
@@ -45,9 +50,13 @@ Dependency audit: the project declares **zero runtime/dev dependencies** (see `p
 
 ## Forms & where submissions go
 
-Because the site is static, **form data never leaves the visitor's browser by itself** — it is saved in that browser's `localStorage` (visible only in the admin dashboard of that same browser, capped at 200 records per form). Each form therefore also offers **"Send via WhatsApp"**, which opens a prefilled chat to the gym's number (`app.js` → `GYM_WHATSAPP` — update it to the real number). That is the only delivery channel that reaches a human today.
+Because the site is static, **form data never leaves the visitor's browser by itself** — it is saved in that browser's `localStorage` (visible only in the admin dashboard of that same browser, capped at 200 records per form). Each form therefore also offers **"Send via WhatsApp"**, which opens a prefilled chat to the gym's public number. Update the public contact values in `js/config.js` for the live gym.
 
-For real lead capture, wire the forms to a server-side endpoint (see SECURITY.md for options).
+For real lead capture, replace `js/data-store.js` with an API adapter and point form
+submissions at server routes. Keep route handlers, validation, and persistence on
+the server; never put credentials in `js/config.js`. A scalable API can begin with
+`POST /api/v1/inquiries`, `POST /api/v1/trials`, `POST /api/v1/messages`, and
+`GET /api/v1/admin/...` routes behind server-side authentication and rate limits.
 
 ## Admin dashboard
 
@@ -68,4 +77,4 @@ Use HTTPS + hardened reverse-proxy headers (see `deploy/nginx.conf.example`):
 - Header-based CSP (adds `frame-ancestors`, which `<meta>` cannot express)
 - `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy`
 - No directory listing, no indexes, large-body limits
-- Update `GYM_WHATSAPP` in `app.js` to the gym's real number
+- Update the public contact values in `js/config.js`

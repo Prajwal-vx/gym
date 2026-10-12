@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Train at IRONFORGE GYM with expert coaches, strength and group programs, and flexible memberships. Book a free trial today." />
+  <meta name="theme-color" content="#0a0a0a" />
   <!-- CSP: restricts script/style/font/image/connect sources. Inline is still
        required by the existing inline event handlers and JS-injected styles.
        For a real deployment also send header-based CSP (with frame-ancestors,
        which <meta> cannot express) — see deploy/nginx.conf.example. -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://images.unsplash.com; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'" />
   <title>IRONFORGE GYM — Forge Your Legacy</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/site.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;900&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -35,10 +38,10 @@
 <!-- ========== NAV ========== -->
 <nav id="navbar">
   <div class="nav-container">
-    <div class="nav-logo">
+    <a class="nav-logo" href="#home" aria-label="IRONFORGE Gym home">
       <span class="logo-iron">IRON</span><span class="logo-forge">FORGE</span>
       <div class="logo-tagline">GYM</div>
-    </div>
+    </a>
     <ul class="nav-links" id="navLinks">
       <li><a href="#home">Home</a></li>
       <li><a href="#about">About</a></li>
@@ -47,12 +50,12 @@
       <li><a href="#gallery">Gallery</a></li>
       <li><a href="#membership">Membership</a></li>
       <li><a href="#contact">Contact</a></li>
-      <li><a href="#" class="nav-btn secondary" onclick="openMemberLoginModal(); return false;">Member Login</a></li>
-      <li><a href="#" class="nav-btn" onclick="openTrialModal(); return false;">Free Trial</a></li>
+      <li><button type="button" class="nav-btn secondary" onclick="openMemberLoginModal()">Member Login</button></li>
+      <li><button type="button" class="nav-btn" onclick="openTrialModal()">Free Trial</button></li>
     </ul>
-    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <button class="hamburger" id="hamburger" type="button" aria-label="Open navigation" aria-controls="navLinks" aria-expanded="false" onclick="toggleMenu()">
       <span></span><span></span><span></span>
-    </div>
+    </button>
   </div>
 </nav>
 
@@ -84,14 +87,14 @@
   <div class="hero-visual">
     <div class="hero-image-stack">
       <div class="hero-img-card card-1">
-        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=500&fit=crop&crop=center" alt="Gym Training" />
+        <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=500&fit=crop&crop=center&auto=format&q=80" alt="Gym Training" />
         <div class="card-label"><i class="fas fa-dumbbell"></i> Strength Zone</div>
       </div>
       <div class="hero-img-card card-2">
-        <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=300&h=380&fit=crop&crop=center" alt="Cardio Training" />
+        <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=300&h=380&fit=crop&crop=center&auto=format&q=80" alt="Cardio Training" />
         <div class="card-label"><i class="fas fa-heartbeat"></i> Cardio Zone</div>
       </div>
-      <div class="hero-floating-badge badge-1"><i class="fas fa-trophy"></i> #1 Gym 2024</div>
+      <div class="hero-floating-badge badge-1"><i class="fas fa-trophy"></i> Premium Gym</div>
       <div class="hero-floating-badge badge-2"><i class="fas fa-star"></i> 4.9 Rating</div>
     </div>
   </div>
@@ -125,7 +128,7 @@
     <div class="about-grid">
       <div class="about-images">
         <div class="about-img-main reveal">
-          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&h=600&fit=crop&crop=center" alt="Gym Interior" />
+          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&h=600&fit=crop&crop=center&auto=format&q=80" alt="Gym Interior" />
           <div class="img-overlay-badge">
             <div class="pulse-ring"></div>
             <i class="fas fa-dumbbell"></i>
@@ -133,7 +136,7 @@
           </div>
         </div>
         <div class="about-img-secondary reveal">
-          <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=300&h=250&fit=crop&crop=center" alt="Training" />
+          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=300&h=250&fit=crop&crop=center&auto=format&q=80" alt="Training" />
         </div>
         <div class="about-experience-badge reveal">
           <div class="exp-num">6+</div>
@@ -216,7 +219,7 @@
     <div class="programs-grid">
       <div class="program-card reveal" style="--delay:0s">
         <div class="program-img">
-          <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400&h=300&fit=crop&crop=center" alt="Strength Training" />
+          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400&h=300&fit=crop&crop=center&auto=format&q=80" alt="Strength Training" />
           <div class="program-overlay"></div>
         </div>
         <div class="program-info">
@@ -228,7 +231,7 @@
       </div>
       <div class="program-card reveal" style="--delay:0.1s">
         <div class="program-img">
-          <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop&crop=center" alt="HIIT" />
+          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop&crop=center&auto=format&q=80" alt="HIIT" />
           <div class="program-overlay"></div>
         </div>
         <div class="program-info">
@@ -240,7 +243,7 @@
       </div>
       <div class="program-card reveal" style="--delay:0.2s">
         <div class="program-img">
-          <img src="https://images.unsplash.com/photo-1552196563-55cd4e45efb3?w=400&h=300&fit=crop&crop=center" alt="Yoga" />
+          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1552196563-55cd4e45efb3?w=400&h=300&fit=crop&crop=center&auto=format&q=80" alt="Yoga" />
           <div class="program-overlay"></div>
         </div>
         <div class="program-info">
@@ -252,7 +255,7 @@
       </div>
       <div class="program-card reveal" style="--delay:0.3s">
         <div class="program-img">
-          <img src="https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=400&h=300&fit=crop&crop=center" alt="Boxing" />
+          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=400&h=300&fit=crop&crop=center&auto=format&q=80" alt="Boxing" />
           <div class="program-overlay"></div>
         </div>
         <div class="program-info">
@@ -264,7 +267,7 @@
       </div>
       <div class="program-card reveal" style="--delay:0.4s">
         <div class="program-img">
-          <img src="https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=400&h=300&fit=crop&crop=center" alt="CrossFit" />
+          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=400&h=300&fit=crop&crop=center&auto=format&q=80" alt="CrossFit" />
           <div class="program-overlay"></div>
         </div>
         <div class="program-info">
@@ -276,7 +279,7 @@
       </div>
       <div class="program-card reveal" style="--delay:0.5s">
         <div class="program-img">
-          <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&crop=center" alt="Body Transformation" />
+          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&crop=center&auto=format&q=80" alt="Body Transformation" />
           <div class="program-overlay"></div>
         </div>
         <div class="program-info">
@@ -301,11 +304,9 @@
     <div class="trainers-grid">
       <div class="trainer-card reveal">
         <div class="trainer-img-wrap">
-          <img src="https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=350&h=420&fit=crop&crop=face" alt="Trainer Rajan" />
+          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=350&h=420&fit=crop&crop=face&auto=format&q=80" alt="Trainer Rajan" />
           <div class="trainer-social">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
-            <a href="#" onclick="openWhatsApp('917000000001')"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://wa.me/917000000001"><i class="fab fa-whatsapp"></i></a>
           </div>
         </div>
         <div class="trainer-info">
@@ -323,11 +324,9 @@
       </div>
       <div class="trainer-card reveal">
         <div class="trainer-img-wrap">
-          <img src="https://images.unsplash.com/photo-1594381898411-846e7d193883?w=350&h=420&fit=crop&crop=face" alt="Trainer Priya" />
+          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1594381898411-846e7d193883?w=350&h=420&fit=crop&crop=face&auto=format&q=80" alt="Trainer Priya" />
           <div class="trainer-social">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
-            <a href="#" onclick="openWhatsApp('917000000002')"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://wa.me/917000000002"><i class="fab fa-whatsapp"></i></a>
           </div>
         </div>
         <div class="trainer-info">
@@ -345,11 +344,9 @@
       </div>
       <div class="trainer-card reveal">
         <div class="trainer-img-wrap">
-          <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=350&h=420&fit=crop&crop=face" alt="Trainer Arjun" />
+          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=350&h=420&fit=crop&crop=face&auto=format&q=80" alt="Trainer Arjun" />
           <div class="trainer-social">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
-            <a href="#" onclick="openWhatsApp('917000000003')"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://wa.me/917000000003"><i class="fab fa-whatsapp"></i></a>
           </div>
         </div>
         <div class="trainer-info">
@@ -367,11 +364,9 @@
       </div>
       <div class="trainer-card reveal">
         <div class="trainer-img-wrap">
-          <img src="https://images.unsplash.com/photo-1609899537878-48700b88d682?w=350&h=420&fit=crop&crop=face" alt="Trainer Sneha" />
+          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1609899537878-48700b88d682?w=350&h=420&fit=crop&crop=face&auto=format&q=80" alt="Trainer Sneha" />
           <div class="trainer-social">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
-            <a href="#" onclick="openWhatsApp('917000000004')"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://wa.me/917000000004"><i class="fab fa-whatsapp"></i></a>
           </div>
         </div>
         <div class="trainer-info">
@@ -400,27 +395,27 @@
     </div>
     <div class="gallery-grid">
       <div class="gallery-item large reveal" onclick="openLightbox(this)">
-        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=600&fit=crop&crop=center" alt="Gym Floor" />
+        <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=600&fit=crop&crop=center&auto=format&q=80" alt="Gym Floor" />
         <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Gym Floor</span></div>
       </div>
       <div class="gallery-item reveal" onclick="openLightbox(this)">
-        <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=300&fit=crop&crop=center" alt="Cardio Zone" />
+        <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=300&fit=crop&crop=center&auto=format&q=80" alt="Cardio Zone" />
         <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Cardio Zone</span></div>
       </div>
       <div class="gallery-item reveal" onclick="openLightbox(this)">
-        <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400&h=300&fit=crop&crop=center" alt="Weight Room" />
+        <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400&h=300&fit=crop&crop=center&auto=format&q=80" alt="Weight Room" />
         <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Weight Room</span></div>
       </div>
       <div class="gallery-item reveal" onclick="openLightbox(this)">
-        <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop&crop=center" alt="Fitness Class" />
+        <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop&crop=center&auto=format&q=80" alt="Fitness Class" />
         <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Group Classes</span></div>
       </div>
       <div class="gallery-item tall reveal" onclick="openLightbox(this)">
-        <img src="https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=400&h=600&fit=crop&crop=center" alt="Boxing" />
+        <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=400&h=600&fit=crop&crop=center&auto=format&q=80" alt="Boxing" />
         <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Boxing Ring</span></div>
       </div>
       <div class="gallery-item reveal" onclick="openLightbox(this)">
-        <img src="https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=400&h=300&fit=crop&crop=center" alt="Training" />
+        <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=400&h=300&fit=crop&crop=center&auto=format&q=80" alt="Training" />
         <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Personal Training</span></div>
       </div>
     </div>
@@ -508,7 +503,7 @@
         <div class="testimonial-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
         <p>"Lost 18kg in 5 months. The combination of trainer support and nutrition coaching is unmatched. IRONFORGE literally changed my life!"</p>
         <div class="testimonial-author">
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face" alt="Vikram" />
+          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face&auto=format&q=80" alt="Vikram" />
           <div><strong>Vikram Patel</strong><span>Lost 18kg | 5 months</span></div>
         </div>
       </div>
@@ -516,7 +511,7 @@
         <div class="testimonial-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
         <p>"The boxing classes are insane! Coach Arjun pushes you to limits you didn't know you had. I'm the fittest I've ever been at 42!"</p>
         <div class="testimonial-author">
-          <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face" alt="Meera" />
+          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face&auto=format&q=80" alt="Meera" />
           <div><strong>Meera Singh</strong><span>42 years old | Boxing champion</span></div>
         </div>
       </div>
@@ -524,7 +519,7 @@
         <div class="testimonial-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
         <p>"The AI workout planner is a game-changer. Every session is perfectly calibrated for my goals. Gained 8kg of muscle in 4 months."</p>
         <div class="testimonial-author">
-          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&h=60&fit=crop&crop=face" alt="Rahul" />
+          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&h=60&fit=crop&crop=face&auto=format&q=80" alt="Rahul" />
           <div><strong>Rahul Kumar</strong><span>Gained 8kg muscle | 4 months</span></div>
         </div>
       </div>
@@ -609,18 +604,18 @@
           </div>
           <div class="contact-item">
             <div class="contact-icon"><i class="fas fa-phone"></i></div>
-            <div><strong>Phone</strong><p>+91 98765 43210</p></div>
+            <div><strong>Phone</strong><p><a data-config="phone" href="tel:+919876543210">+91 98765 43210</a></p></div>
           </div>
           <div class="contact-item">
             <div class="contact-icon"><i class="fas fa-envelope"></i></div>
-            <div><strong>Email</strong><p>hello@ironforge.in</p></div>
+            <div><strong>Email</strong><p><a data-config="email" href="mailto:hello@ironforge.in">hello@ironforge.in</a></p></div>
           </div>
           <div class="contact-item">
             <div class="contact-icon"><i class="fas fa-clock"></i></div>
             <div><strong>Hours</strong><p>Mon–Fri: 5AM–11PM | Sat–Sun: 6AM–10PM</p></div>
           </div>
         </div>
-        <button class="btn-whatsapp" onclick="openWhatsApp('919876543210')">
+        <button class="btn-whatsapp" onclick="openWhatsApp()">
           <i class="fab fa-whatsapp"></i> Chat on WhatsApp
         </button>
       </div>
@@ -670,13 +665,9 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <div class="nav-logo"><span class="logo-iron">IRON</span><span class="logo-forge">FORGE</span></div>
+          <a class="nav-logo" href="#home" aria-label="IRONFORGE Gym home"><span class="logo-iron">IRON</span><span class="logo-forge">FORGE</span></a>
           <p>Forge your strongest self. Join the community that pushes limits and transforms lives every single day.</p>
           <div class="footer-social">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
           </div>
         </div>
         <div class="footer-links">
@@ -692,38 +683,31 @@
         <div class="footer-links">
           <h4>Services</h4>
           <ul>
-            <li><a href="#">Personal Training</a></li>
-            <li><a href="#">Nutrition Coaching</a></li>
-            <li><a href="#">Group Classes</a></li>
-            <li><a href="#">Online Coaching</a></li>
-            <li><a href="#">Corporate Wellness</a></li>
+            <li><a href="#programs">Personal Training</a></li>
+            <li><a href="#about">Nutrition Coaching</a></li>
+            <li><a href="#programs">Group Classes</a></li>
+            <li><a href="#contact">Online Coaching</a></li>
+            <li><a href="#contact">Corporate Wellness</a></li>
           </ul>
         </div>
         <div class="footer-newsletter">
           <h4>Newsletter</h4>
           <p>Get free fitness tips and exclusive offers.</p>
-          <div class="newsletter-form">
-            <input type="email" placeholder="Your email" />
-            <button><i class="fas fa-arrow-right"></i></button>
-          </div>
-          <div class="footer-app-btns">
-            <button class="app-btn" type="button" onclick="openMemberLoginModal()"><i class="fas fa-user"></i> Member Login</button>
-            <button class="app-btn" type="button" onclick="openAdminPanel()"><i class="fas fa-user-shield"></i> Admin Portal</button>
-          </div>
+          <p class="newsletter-note">Questions? <a href="#contact">Contact our team</a>.</p>
         </div>
       </div>
     </div>
   </div>
   <div class="footer-bottom">
     <div class="container">
-      <p>© 2024 IRONFORGE GYM. All rights reserved.</p>
-      <p><a href="#" onclick="openAdminPanel(); return false;">Admin</a> | <a href="#" onclick="openMemberLoginModal(); return false;">Member Login</a> | Privacy Policy | Terms of Service</p>
+      <p>© <span id="copyright-year"></span> IRONFORGE GYM. All rights reserved.</p>
+      <p><a href="#contact">Contact</a> | <button type="button" class="footer-admin-link" onclick="openAdminPanel()">Admin</button> | <button type="button" class="footer-admin-link" onclick="openMemberLoginModal()">Member Login</button></p>
     </div>
   </div>
 </footer>
 
 <!-- ========== WHATSAPP FLOAT ========== -->
-<button class="whatsapp-float" onclick="openWhatsApp('919876543210')" title="Chat on WhatsApp">
+<button class="whatsapp-float" onclick="openWhatsApp()" title="Chat on WhatsApp" aria-label="Chat with IRONFORGE on WhatsApp">
   <i class="fab fa-whatsapp"></i>
   <div class="whatsapp-tooltip">Chat with us!</div>
 </button>
@@ -1015,7 +999,10 @@
 <!-- ========== SUCCESS TOAST ========== -->
 <div id="toast" class="toast"><i class="fas fa-check-circle"></i> <span id="toast-msg"></span></div>
 
+<script src="js/config.js"></script>
 <script src="js/security-utils.js"></script>
-<script src="app.js"></script>
+<script src="js/data-store.js"></script>
+<script src="js/members.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
