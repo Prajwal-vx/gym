@@ -19,8 +19,10 @@
 </head>
 <body>
 
+<a class="skip-link" href="#home">Skip to content</a>
+
 <!-- ========== LOADER ========== -->
-<div id="loader">
+<div id="loader" aria-hidden="true">
   <div class="loader-inner">
     <div class="loader-logo">IRONFORGE</div>
     <div class="loader-bar"><div class="loader-fill"></div></div>
@@ -29,14 +31,11 @@
 </div>
 
 <!-- ========== CURSOR ========== -->
-<div class="cursor-dot"></div>
-<div class="cursor-ring"></div>
 
 <!-- ========== PARTICLES ========== -->
-<canvas id="particles-canvas"></canvas>
 
 <!-- ========== NAV ========== -->
-<nav id="navbar">
+<nav id="navbar" aria-label="Main navigation">
   <div class="nav-container">
     <a class="nav-logo" href="#home" aria-label="IRONFORGE Gym home">
       <span class="logo-iron">IRON</span><span class="logo-forge">FORGE</span>
@@ -723,7 +722,7 @@
     <button class="modal-close" onclick="closeModal('trialModal')"><i class="fas fa-times"></i></button>
     <div class="modal-header">
       <div class="modal-icon"><i class="fas fa-calendar-check"></i></div>
-      <h2>Book Your FREE Trial Class</h2>
+      <h2 id="trialModalTitle">Book Your FREE Trial Class</h2>
       <p>Experience IRONFORGE for free. No strings attached.</p>
     </div>
     <form class="modal-form" onsubmit="submitTrial(event)">
@@ -764,7 +763,7 @@
     <button class="modal-close" onclick="closeModal('inquiryModal')"><i class="fas fa-times"></i></button>
     <div class="modal-header">
       <div class="modal-icon"><i class="fas fa-id-card"></i></div>
-      <h2>Membership Inquiry</h2>
+      <h2 id="inquiryModalTitle">Membership Inquiry</h2>
       <p>Tell us about yourself — we'll reach out within 2 hours.</p>
     </div>
     <form class="modal-form" onsubmit="submitMembership(event)">
@@ -798,7 +797,7 @@
     <button class="modal-close" onclick="closeModal('authModal')"><i class="fas fa-times"></i></button>
     <div class="modal-header">
       <div class="modal-icon"><i class="fas fa-user-circle"></i></div>
-      <h2>Member Login</h2>
+      <h2 id="authModalTitle">Member Login</h2>
       <p>Track your membership, upcoming payments, and reminders in one place.</p>
     </div>
 
@@ -997,7 +996,7 @@
 </div>
 
 <!-- ========== SUCCESS TOAST ========== -->
-<div id="toast" class="toast"><i class="fas fa-check-circle"></i> <span id="toast-msg"></span></div>
+<div id="toast" class="toast" role="status" aria-live="polite"><i class="fas fa-check-circle" aria-hidden="true"></i> <span id="toast-msg"></span></div>
 
 <script src="js/config.js"></script>
 <script src="js/security-utils.js"></script>

@@ -6,7 +6,17 @@ window.addEventListener('load', () => {
       loader.classList.add('hidden');
       setTimeout(() => loader.remove(), 900);
     }
-  }, 2000);
+  }, 120);
+});
+
+// Give every form control a programmatic name matching its visible label.
+document.querySelectorAll('.form-group').forEach(group => {
+  const control = group.querySelector('input, select, textarea');
+  const label = group.querySelector('label');
+  if (control && label) {
+    if (!label.htmlFor && control.id) label.htmlFor = control.id;
+    if (!control.id && label.textContent.trim()) control.setAttribute('aria-label', label.textContent.trim());
+  }
 });
 
 /* ===== CUSTOM CURSOR ===== */
@@ -254,6 +264,9 @@ function openTrialModal() {
   const modal = document.getElementById('trialModal');
   if (modal) {
     modal.classList.add('active');
+    modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'trialModalTitle');
+    requestAnimationFrame(() => modal.querySelector('input, button, select')?.focus());
     document.body.style.overflow = 'hidden';
     // Set min date to today
     const today = new Date().toISOString().split('T')[0];
@@ -266,6 +279,9 @@ function openInquiryModal(plan) {
   const modal = document.getElementById('inquiryModal');
   if (modal) {
     modal.classList.add('active');
+    modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'inquiryModalTitle');
+    requestAnimationFrame(() => modal.querySelector('input, button, select')?.focus());
     document.body.style.overflow = 'hidden';
     if (plan) {
       const planSelect = document.getElementById('inq-plan');
@@ -286,6 +302,11 @@ function closeModal(id) {
   if (modal) {
     modal.classList.remove('active');
   }
+  if (!document.querySelector('.modal-overlay.active')) {
+    document.body.style.overflow = '';
+    const trigger = document.activeElement;
+    if (trigger?.closest('.modal-overlay')) document.querySelector('.nav-btn, .btn-primary')?.focus();
+  }
   document.body.style.overflow = '';
   // Re-lock the admin session whenever the admin panel closes, so an
   // unattended staff browser does not stay unlocked indefinitely.
@@ -295,9 +316,17 @@ function closeModal(id) {
 // Close on Escape
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
-    document.body.style.overflow = '';
+    document.querySelectorAll('.modal-overlay.active').forEach(m => closeModal(m.id));
     closeLightbox();
+  }
+  if (e.key === 'Tab') {
+    const modal = document.querySelector('.modal-overlay.active');
+    if (!modal) return;
+    const items = [...modal.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex="0"]')].filter(el => el.getClientRects().length);
+    if (!items.length) return;
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }
 });
 
