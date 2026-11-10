@@ -16,7 +16,17 @@ document.querySelectorAll('.form-group').forEach(group => {
   if (control && label) {
     if (!label.htmlFor && control.id) label.htmlFor = control.id;
     if (!control.id && label.textContent.trim()) control.setAttribute('aria-label', label.textContent.trim());
+    label.classList.toggle('required', Boolean(control.required));
   }
+});
+
+document.querySelectorAll('input, select, textarea').forEach(control => {
+  const id = control.id || '';
+  if (/-name$/.test(id)) control.autocomplete = 'name';
+  else if (/-email$/.test(id) || id === 'member-email') control.autocomplete = 'email';
+  else if (/-phone$/.test(id)) control.autocomplete = 'tel';
+  else if (id === 'member-password') control.autocomplete = 'current-password';
+  else if (id === 'new-member-password') control.autocomplete = 'new-password';
 });
 
 /* ===== CUSTOM CURSOR ===== */
@@ -256,13 +266,21 @@ function smoothScrollTo(selector) {
   const navbar = document.getElementById('navbar');
   const offset = (navbar ? navbar.offsetHeight : 0) + 20; // clear the fixed navbar
   const top = el.getBoundingClientRect().top + window.pageYOffset - offset;
-  window.scrollTo({ top, behavior: 'smooth' });
+  window.scrollTo({ top, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
 }
 
 /* ===== MODALS ===== */
+let lastModalTrigger = null;
+let lastLightboxTrigger = null;
+
 function openTrialModal() {
   const modal = document.getElementById('trialModal');
   if (modal) {
+    lastModalTrigger = document.activeElement;
     modal.classList.add('active');
     modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true');
     modal.setAttribute('aria-labelledby', 'trialModalTitle');
@@ -278,6 +296,7 @@ function openTrialModal() {
 function openInquiryModal(plan) {
   const modal = document.getElementById('inquiryModal');
   if (modal) {
+    lastModalTrigger = document.activeElement;
     modal.classList.add('active');
     modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true');
     modal.setAttribute('aria-labelledby', 'inquiryModalTitle');
@@ -304,8 +323,8 @@ function closeModal(id) {
   }
   if (!document.querySelector('.modal-overlay.active')) {
     document.body.style.overflow = '';
-    const trigger = document.activeElement;
-    if (trigger?.closest('.modal-overlay')) document.querySelector('.nav-btn, .btn-primary')?.focus();
+    if (lastModalTrigger?.isConnected) lastModalTrigger.focus();
+    lastModalTrigger = null;
   }
   document.body.style.overflow = '';
   // Re-lock the admin session whenever the admin panel closes, so an
@@ -315,18 +334,30 @@ function closeModal(id) {
 
 // Close on Escape
 document.addEventListener('keydown', (e) => {
+  const navLinks = document.getElementById('navLinks');
+  const hamburger = document.getElementById('hamburger');
+  if (e.key === 'Escape' && navLinks?.classList.contains('open')) {
+    navLinks.classList.remove('open');
+    hamburger?.classList.remove('active');
+    hamburger?.setAttribute('aria-expanded', 'false');
+    hamburger?.setAttribute('aria-label', 'Open navigation');
+    hamburger?.focus();
+  }
   if (e.key === 'Escape') {
     document.querySelectorAll('.modal-overlay.active').forEach(m => closeModal(m.id));
     closeLightbox();
   }
   if (e.key === 'Tab') {
-    const modal = document.querySelector('.modal-overlay.active');
+    const modal = document.querySelector('.modal-overlay.active, .lightbox.active');
     if (!modal) return;
     const items = [...modal.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex="0"]')].filter(el => el.getClientRects().length);
     if (!items.length) return;
     const first = items[0], last = items[items.length - 1];
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.gallery-item[role="button"]')) {
+    e.preventDefault(); openLightbox(e.target);
   }
 });
 
@@ -518,7 +549,10 @@ function showAdminView(view) {
 function openAdminPanel() {
   const panel = document.getElementById('adminPanel');
   if (panel) {
+    lastModalTrigger = document.activeElement;
     panel.classList.add('active');
+    panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-modal', 'true'); panel.setAttribute('aria-label', 'IRONFORGE admin access and dashboard');
+    requestAnimationFrame(() => panel.querySelector('input, button')?.focus());
   }
   document.body.style.overflow = 'hidden';
   adminUnlocked = false;
@@ -927,8 +961,11 @@ function openLightbox(el) {
   if (img && lightboxImg) lightboxImg.src = img.src;
   if (caption && lightboxCaption) lightboxCaption.textContent = caption.textContent;
   if (lightbox) {
+    lastLightboxTrigger = el;
     lightbox.classList.add('active');
+    lightbox.setAttribute('role', 'dialog'); lightbox.setAttribute('aria-modal', 'true'); lightbox.setAttribute('aria-labelledby', 'lightbox-caption');
     document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => lightbox.querySelector('button')?.focus());
   }
 }
 
@@ -936,7 +973,9 @@ function closeLightbox() {
   const lightbox = document.getElementById('lightbox');
   if (lightbox) {
     lightbox.classList.remove('active');
-    document.body.style.overflow = '';
+    if (lastLightboxTrigger?.isConnected) lastLightboxTrigger.focus();
+    lastLightboxTrigger = null;
+    if (!document.querySelector('.modal-overlay.active')) document.body.style.overflow = '';
   }
 }
 
@@ -944,7 +983,15 @@ function closeLightbox() {
 function showToast(msg) {
   const toast = document.getElementById('toast');
   const toastMsg = document.getElementById('toast-msg');
-  if (toastMsg) toastMsg.textContent = msg;
+  const icon = toast?.querySelector('i');
+  const isError = /^[⚠❌]/u.test(msg);
+  const cleanMessage = String(msg).replace(/^[✅❌⚠️📣📩🎯👋🔓\s]+/u, '');
+  if (toastMsg) toastMsg.textContent = cleanMessage;
+  if (icon) {
+    icon.className = isError ? 'fas fa-circle-exclamation' : 'fas fa-circle-check';
+    icon.setAttribute('aria-hidden', 'true');
+  }
+  if (toast) toast.dataset.state = isError ? 'error' : 'success';
   if (toast) {
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 4000);

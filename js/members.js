@@ -132,6 +132,8 @@ function renderMemberDashboard() {
   const member = getCurrentMember();
   const panel = document.getElementById('memberDashboard');
   if (!panel) return;
+  const contact = document.getElementById('contact');
+  if (contact && !document.getElementById('main-content')?.contains(panel)) contact.before(panel);
   if (!member) {
     panel.style.display = 'none';
     return;
@@ -153,7 +155,9 @@ function renderMemberDashboard() {
   if (amountEl) amountEl.textContent = formatCurrency(member.amount);
   if (balanceEl) balanceEl.textContent = status.state === 'overdue' ? 'Needs attention. Please settle the outstanding payment.' : status.message;
   renderMemberNotifications(member);
+  const wasHidden = panel.style.display === 'none';
   panel.style.display = 'block';
+  if (wasHidden) panel.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
 }
 
 function refreshAdminMemberList() {
@@ -207,8 +211,11 @@ function refreshAllMemberData() {
 function openMemberLoginModal() {
   const modal = document.getElementById('authModal');
   if (modal) {
+    lastModalTrigger = document.activeElement;
     modal.classList.add('active');
+    modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true'); modal.setAttribute('aria-labelledby', 'authModalTitle');
     document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => modal.querySelector('input, button')?.focus());
   }
 }
 
@@ -217,6 +224,10 @@ function toggleMemberAuth(mode) {
   const registerPanel = document.getElementById('member-register-panel');
   if (loginPanel) loginPanel.style.display = mode === 'login' ? 'block' : 'none';
   if (registerPanel) registerPanel.style.display = mode === 'register' ? 'block' : 'none';
+  document.getElementById('member-login-tab')?.setAttribute('aria-selected', String(mode === 'login'));
+  document.getElementById('member-register-tab')?.setAttribute('aria-selected', String(mode === 'register'));
+  document.getElementById('member-login-tab')?.classList.toggle('active', mode === 'login');
+  document.getElementById('member-register-tab')?.classList.toggle('active', mode === 'register');
 }
 
 async function handleMemberLogin(event) {

@@ -19,7 +19,7 @@
 </head>
 <body>
 
-<a class="skip-link" href="#home">Skip to content</a>
+<a class="skip-link" href="#main-content">Skip to content</a>
 
 <!-- ========== LOADER ========== -->
 <div id="loader" aria-hidden="true">
@@ -59,6 +59,7 @@
 </nav>
 
 <!-- ========== HERO ========== -->
+<main id="main-content">
 <section id="home" class="hero">
   <div class="hero-bg-text">IRONFORGE</div>
   <div class="hero-content">
@@ -305,7 +306,7 @@
         <div class="trainer-img-wrap">
           <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=350&h=420&fit=crop&crop=face&auto=format&q=80" alt="Trainer Rajan" />
           <div class="trainer-social">
-            <a href="https://wa.me/917000000001"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://wa.me/917000000001" aria-label="Message trainer Rajan on WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
           </div>
         </div>
         <div class="trainer-info">
@@ -325,7 +326,7 @@
         <div class="trainer-img-wrap">
           <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1594381898411-846e7d193883?w=350&h=420&fit=crop&crop=face&auto=format&q=80" alt="Trainer Priya" />
           <div class="trainer-social">
-            <a href="https://wa.me/917000000002"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://wa.me/917000000002" aria-label="Message trainer Priya on WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
           </div>
         </div>
         <div class="trainer-info">
@@ -345,7 +346,7 @@
         <div class="trainer-img-wrap">
           <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=350&h=420&fit=crop&crop=face&auto=format&q=80" alt="Trainer Arjun" />
           <div class="trainer-social">
-            <a href="https://wa.me/917000000003"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://wa.me/917000000003" aria-label="Message trainer Arjun on WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
           </div>
         </div>
         <div class="trainer-info">
@@ -365,7 +366,7 @@
         <div class="trainer-img-wrap">
           <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1609899537878-48700b88d682?w=350&h=420&fit=crop&crop=face&auto=format&q=80" alt="Trainer Sneha" />
           <div class="trainer-social">
-            <a href="https://wa.me/917000000004"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://wa.me/917000000004" aria-label="Message trainer Sneha on WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
           </div>
         </div>
         <div class="trainer-info">
@@ -393,27 +394,27 @@
       <h2 class="section-title">Inside <span class="orange">IRONFORGE</span></h2>
     </div>
     <div class="gallery-grid">
-      <div class="gallery-item large reveal" onclick="openLightbox(this)">
+      <div class="gallery-item large reveal" role="button" tabindex="0" aria-label="Open Gym Floor photo" onclick="openLightbox(this)">
         <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=600&fit=crop&crop=center&auto=format&q=80" alt="Gym Floor" />
         <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Gym Floor</span></div>
       </div>
-      <div class="gallery-item reveal" onclick="openLightbox(this)">
+      <div class="gallery-item reveal" role="button" tabindex="0" aria-label="Open Cardio Zone photo" onclick="openLightbox(this)">
         <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=300&fit=crop&crop=center&auto=format&q=80" alt="Cardio Zone" />
         <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Cardio Zone</span></div>
       </div>
-      <div class="gallery-item reveal" onclick="openLightbox(this)">
+      <div class="gallery-item reveal" role="button" tabindex="0" aria-label="Open Weight Room photo" onclick="openLightbox(this)">
         <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400&h=300&fit=crop&crop=center&auto=format&q=80" alt="Weight Room" />
         <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Weight Room</span></div>
       </div>
-      <div class="gallery-item reveal" onclick="openLightbox(this)">
+      <div class="gallery-item reveal" role="button" tabindex="0" aria-label="Open Group Classes photo" onclick="openLightbox(this)">
         <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop&crop=center&auto=format&q=80" alt="Fitness Class" />
         <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Group Classes</span></div>
       </div>
-      <div class="gallery-item tall reveal" onclick="openLightbox(this)">
+      <div class="gallery-item tall reveal" role="button" tabindex="0" aria-label="Open Boxing Ring photo" onclick="openLightbox(this)">
         <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=400&h=600&fit=crop&crop=center&auto=format&q=80" alt="Boxing" />
         <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Boxing Ring</span></div>
       </div>
-      <div class="gallery-item reveal" onclick="openLightbox(this)">
+      <div class="gallery-item reveal" role="button" tabindex="0" aria-label="Open Personal Training photo" onclick="openLightbox(this)">
         <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=400&h=300&fit=crop&crop=center&auto=format&q=80" alt="Training" />
         <div class="gallery-overlay"><i class="fas fa-expand"></i><span>Personal Training</span></div>
       </div>
@@ -658,6 +659,8 @@
   </div>
 </section>
 
+</main>
+
 <!-- ========== FOOTER ========== -->
 <footer class="footer">
   <div class="footer-top">
@@ -712,14 +715,14 @@
 </button>
 
 <!-- ========== BACK TO TOP ========== -->
-<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+<button class="back-top" id="backTop" aria-label="Back to top" onclick="scrollToTop()">
   <i class="fas fa-chevron-up"></i>
 </button>
 
 <!-- ========== TRIAL MODAL ========== -->
 <div id="trialModal" class="modal-overlay" onclick="closeModal('trialModal')">
   <div class="modal" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeModal('trialModal')"><i class="fas fa-times"></i></button>
+    <button class="modal-close" aria-label="Close trial booking" onclick="closeModal('trialModal')"><i class="fas fa-times" aria-hidden="true"></i></button>
     <div class="modal-header">
       <div class="modal-icon"><i class="fas fa-calendar-check"></i></div>
       <h2 id="trialModalTitle">Book Your FREE Trial Class</h2>
@@ -760,7 +763,7 @@
 <!-- ========== INQUIRY MODAL ========== -->
 <div id="inquiryModal" class="modal-overlay" onclick="closeModal('inquiryModal')">
   <div class="modal" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeModal('inquiryModal')"><i class="fas fa-times"></i></button>
+    <button class="modal-close" aria-label="Close membership inquiry" onclick="closeModal('inquiryModal')"><i class="fas fa-times" aria-hidden="true"></i></button>
     <div class="modal-header">
       <div class="modal-icon"><i class="fas fa-id-card"></i></div>
       <h2 id="inquiryModalTitle">Membership Inquiry</h2>
@@ -794,19 +797,19 @@
 <!-- ========== MEMBER AUTH MODAL ========== -->
 <div id="authModal" class="modal-overlay" onclick="closeModal('authModal')">
   <div class="modal auth-modal" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeModal('authModal')"><i class="fas fa-times"></i></button>
+    <button class="modal-close" aria-label="Close member account" onclick="closeModal('authModal')"><i class="fas fa-times" aria-hidden="true"></i></button>
     <div class="modal-header">
       <div class="modal-icon"><i class="fas fa-user-circle"></i></div>
       <h2 id="authModalTitle">Member Login</h2>
       <p>Track your membership, upcoming payments, and reminders in one place.</p>
     </div>
 
-    <div class="member-auth-tabs">
-      <button class="member-auth-tab active" type="button" onclick="toggleMemberAuth('login')">Login</button>
-      <button class="member-auth-tab" type="button" onclick="toggleMemberAuth('register')">Create Account</button>
+    <div class="member-auth-tabs" role="tablist" aria-label="Member account options">
+      <button class="member-auth-tab active" id="member-login-tab" type="button" role="tab" aria-selected="true" aria-controls="member-login-panel" onclick="toggleMemberAuth('login')">Login</button>
+      <button class="member-auth-tab" id="member-register-tab" type="button" role="tab" aria-selected="false" aria-controls="member-register-panel" onclick="toggleMemberAuth('register')">Create Account</button>
     </div>
 
-    <div id="member-login-panel" class="member-auth-panel">
+    <div id="member-login-panel" class="member-auth-panel" role="tabpanel" aria-labelledby="member-login-tab" tabindex="0">
       <form class="modal-form" onsubmit="handleMemberLogin(event)">
         <div class="form-group">
           <input type="email" id="member-email" placeholder="Email address" required />
@@ -829,7 +832,7 @@
       </div>
     </div>
 
-    <div id="member-register-panel" class="member-auth-panel" style="display:none;">
+    <div id="member-register-panel" class="member-auth-panel" role="tabpanel" aria-labelledby="member-register-tab" tabindex="0" style="display:none;">
       <form id="member-register-form" class="modal-form" onsubmit="handleMemberRegister(event)">
         <div class="form-group">
           <input type="text" id="new-member-name" placeholder="Full name" required />
@@ -914,7 +917,7 @@
      provisioned on first use) — see app.js / SECURITY.md for the model. -->
 <div id="adminPanel" class="modal-overlay admin-overlay" onclick="closeModal('adminPanel')">
   <div class="modal admin-modal" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeModal('adminPanel')"><i class="fas fa-times"></i></button>
+    <button class="modal-close" aria-label="Close admin dashboard" onclick="closeModal('adminPanel')"><i class="fas fa-times" aria-hidden="true"></i></button>
     <div id="adminSetup" class="admin-login" style="display:none;">
       <div class="modal-header">
         <div class="modal-icon"><i class="fas fa-user-shield"></i></div>
@@ -928,7 +931,7 @@
     <div id="adminLogin" class="admin-login">
       <div class="modal-header">
         <div class="modal-icon"><i class="fas fa-lock"></i></div>
-        <h2>Admin Login</h2>
+        <h2 id="adminModalTitle">Admin Login</h2>
       </div>
       <div class="form-group"><input type="password" id="admin-pass" placeholder="Enter admin passcode" maxlength="128" /><label>Passcode</label></div>
       <p id="admin-lock-msg" class="admin-lock-msg" style="display:none;"></p>
@@ -975,11 +978,11 @@
       </div>
       <div id="admin-gallery" class="admin-section" style="display:none;">
         <h3>Add Gym Photos</h3>
-        <div class="photo-upload-area" onclick="document.getElementById('photo-input').click()">
+        <button type="button" class="photo-upload-area" onclick="document.getElementById('photo-input').click()" aria-label="Choose gym photos to upload">
           <i class="fas fa-cloud-upload-alt"></i>
           <p>Click to upload gym photos</p>
-          <input type="file" id="photo-input" accept="image/*" multiple style="display:none" onchange="uploadPhotos(event)" />
-        </div>
+        </button>
+        <input type="file" id="photo-input" accept="image/*" multiple hidden onchange="uploadPhotos(event)" />
         <div id="admin-photos" class="admin-photos-grid"></div>
       </div>
     </div>
@@ -989,7 +992,7 @@
 <!-- ========== LIGHTBOX ========== -->
 <div id="lightbox" class="lightbox" onclick="closeLightbox()">
   <div class="lightbox-inner" onclick="event.stopPropagation()">
-    <button class="lightbox-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+    <button class="lightbox-close" aria-label="Close photo viewer" onclick="closeLightbox()"><i class="fas fa-times" aria-hidden="true"></i></button>
     <img id="lightbox-img" src="" alt="" />
     <p id="lightbox-caption"></p>
   </div>
